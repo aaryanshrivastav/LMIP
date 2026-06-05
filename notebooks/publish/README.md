@@ -22,23 +22,25 @@ The LMIP Publication System implements a deterministic, manifest-driven data pub
 
 ## Quick Start
 
-### Run the Full Pipeline
+### Run the Pipeline Manually
+
+Execute notebooks in this sequence:
 
 ```python
-# Open and run: 00_publish_orchestrator.ipynb
-EXECUTION_MODE = "full"
+# Step 1: Export tables to CSV snapshots
+dbutils.notebook.run("./publish_csv_snapshot_export", timeout_seconds=3600)
+
+# Step 2: Generate manifest files
+dbutils.notebook.run("./publish_manifest_write", timeout_seconds=600)
+
+# Step 3: Validate the snapshot
+dbutils.notebook.run("./publish_load_order_check", timeout_seconds=600)
+
+# Step 4: Sync to Supabase Postgres
+dbutils.notebook.run("./publish_supabase_upsert", timeout_seconds=3600)
 ```
 
-This will:
-1. Export all tables to CSV snapshots
-2. Generate manifest files
-3. Validate the snapshot
-4. Sync to Supabase Postgres
-
 ## Notebooks
-
-### 00_publish_orchestrator
-Master orchestration - runs all stages in sequence.
 
 ### publish_csv_snapshot_export
 Export tables to compressed CSV files with checksums.
@@ -87,18 +89,34 @@ Phase 4: Audit
 
 ## Monitoring
 
-### Check Pipeline Status
+### Check Export Status
+
+Query the export log tables created by the notebooks:
+
 ```sql
-SELECT execution_mode, overall_status, duration_sec/60 as duration_min
-FROM workspace.audit.publish_pipeline_log
-ORDER BY started_at DESC LIMIT 10;
+-- Check CSV export status
+SELECT 
+  table_name,
+  row_count,
+  file_size_mb,
+  status,
+  export_timestamp
+FROM workspace.publish.csv_export_log
+ORDER BY export_timestamp DESC
+LIMIT 20;
 ```
 
-### Check Validation Issues
+### Check Validation Results
+
 ```sql
-SELECT snapshot_id, overall_status, checks_failed, total_issues
-FROM workspace.audit.publish_validation_log
-WHERE overall_status = 'FAIL'
+-- Check validation results
+SELECT 
+  validation_type,
+  status,
+  issues_found,
+  validated_at
+FROM workspace.publish.validation_log
+WHERE status = 'FAIL'
 ORDER BY validated_at DESC;
 ```
 
@@ -164,4 +182,4 @@ dbutils.secrets.put(scope="supabase", key="password", string_value="...")
 v1.0 (2026-06-04)
 * Initial release with full pipeline
 * CSV export, manifest generation, validation, Supabase sync
-* Orchestration framework
+* Manual execution workflow (no orchestrator)
