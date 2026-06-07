@@ -1,0 +1,219 @@
+# ========================================
+# LMIP Schema Contract: quarantine_batches
+# ========================================
+
+table_name: workspace.quarantine.quarantine_batches
+layer: quarantine
+description: >
+  Batch-level tracking for bulk quarantine operations.
+  Records metadata about quarantine routing, reprocessing, and cleanup batches.
+  Enables audit trail and monitoring of quarantine operations at the batch level.
+
+primary_key:
+  - batch_id
+
+business_keys:
+  - batch_id
+  - operation_type
+
+columns:
+  - name: batch_id
+    type: STRING
+    nullable: false
+    description: Unique identifier for this batch operation (format YYYYMMDD_HHMMSS or UUID)
+    
+  - name: operation_type
+    type: STRING
+    nullable: false
+    description: >
+      Type of batch operation performed.
+      Values: ROUTE (initial quarantine), REPROCESS (reinstate records), 
+      DISCARD (mark as discarded), CLEANUP (retention cleanup), REVIEW_APPLY (bulk review decisions)
+    
+  - name: source_notebook
+    type: STRING
+    nullable: false
+    description: Notebook path that executed this batch operation
+    
+  - name: initiated_by
+    type: STRING
+    nullable: true
+    description: User or service account that triggered the batch operation
+    
+  - name: operation_status
+    type: STRING
+    nullable: false
+    description: >
+      Overall status of the batch operation.
+      Values: IN_PROGRESS, COMPLETED, FAILED, PARTIALLY_COMPLETED
+    
+  - name: records_processed
+    type: BIGINT
+    nullable: false
+    description: Total number of records included in this batch operation
+    
+  - name: records_succeeded
+    type: BIGINT
+    nullable: false
+    description: Number of records successfully processed in this batch
+    
+  - name: records_failed
+    type: BIGINT
+    nullable: false
+    description: Number of records that failed processing in this batch
+    
+  - name: failure_stage
+    type: STRING
+    nullable: true
+    description: Pipeline stage where batch failure occurred (if operation_status = FAILED)
+    
+  - name: failure_reason
+    type: STRING
+    nullable: true
+    description: Detailed error message or reason for batch failure
+    
+  - name: source_layer
+    type: STRING
+    nullable: true
+    description: Originating data layer for quarantined records (e.g., silver, bronze)
+    
+  - name: dq_rule_name
+    type: STRING
+    nullable: true
+    description: Data quality rule that triggered quarantine (for ROUTE operations)
+    
+  - name: severity
+    type: STRING
+    nullable: true
+    description: Severity level of the DQ failure (ERROR, WARN)
+    
+  - name: reprocess_target_table
+    type: STRING
+    nullable: true
+    description: Target table for reprocessing (for REPROCESS operations)
+    
+  - name: retention_days
+    type: INT
+    nullable: true
+    description: Retention period applied (for CLEANUP operations)
+    
+  - name: review_file_path
+    type: STRING
+    nullable: true
+    description: Path to CSV file containing bulk review decisions (for REVIEW_APPLY operations)
+    
+  - name: batch_config
+    type: STRING
+    nullable: true
+    description: JSON string containing additional batch configuration parameters
+    
+  - name: execution_duration_seconds
+    type: DOUBLE
+    nullable: true
+    description: Total execution time for the batch operation in seconds
+    
+  - name: started_at
+    type: TIMESTAMP
+    nullable: false
+    description: Timestamp when batch operation started
+    
+  - name: completed_at
+    type: TIMESTAMP
+    nullable: true
+    description: Timestamp when batch operation completed (null if IN_PROGRESS or FAILED)
+    
+  - name: created_at
+    type: TIMESTAMP
+    nullable: false
+    description: Timestamp when batch record was created
+
+partitioning:
+  type: date
+  columns:
+    - started_at
+  rationale: Query patterns typically filter by batch execution date for monitoring and audit
+
+quality_rules:
+  - rule: not_null
+    columns:
+      - batch_id
+      - operation_type
+      - source_notebook
+      - operation_status
+      - records_processed
+      - records_succeeded
+      - records_failed
+      - started_at
+      - created_at
+    description: Core batch tracking fields must always be populated
+    
+  - rule: unique
+    columns:
+      - batch_id
+    description: Each batch operation must have a unique identifier
+    
+  - rule: enum_validation
+    columns:
+      - operation_type
+    allowed_values:
+      - ROUTE
+      - REPROCESS
+      - DISCARD
+      - CLEANUP
+      - REVIEW_APPLY
+    description: Operation type must be one of the defined batch operations
+    
+  - rule: enum_validation
+    columns:
+      - operation_status
+    allowed_values:
+      - IN_PROGRESS
+      - COMPLETED
+      - FAILED
+      - PARTIALLY_COMPLETED
+    description: Status must follow defined batch lifecycle states
+    
+  - rule: business_logic
+    description: Record counts must be consistent (processed = succeeded + failed)
+    condition: records_processed = records_succeeded + records_failed
+    
+  - rule: business_logic
+    description: Completed batches must have completed_at timestamp
+    condition: (operation_status IN ('COMPLETED', 'FAILED', 'PARTIALLY_COMPLETED') AND completed_at IS NOT NULL) OR operation_status = 'IN_PROGRESS'
+    
+  - rule: temporal_integrity
+    description: completed_at must be after or equal to started_at
+    condition: completed_at IS NULL OR completed_at >= started_at
+    
+  - rule: business_logic
+    description: Failed batches must have failure_reason documented
+    condition: (operation_status = 'FAILED' AND failure_reason IS NOT NULL) OR operation_status != 'FAILED'
+
+lineage_inputs:
+  - workspace.silver.silver_jobs_current
+  - workspace.quarantine.quarantine_jobs
+  
+lineage_outputs:
+  - workspace.quarantine.quarantine_jobs
+  - workspace.audit.audit_pipeline_runs
+  - workspace.gold.gold_pipeline_health
+
+refresh_schedule: Event-driven (created on each quarantine batch operation)
+
+sla:
+  freshness: Real-time (logged immediately on batch execution)
+  availability: 99.9%
+
+data_steward: Data Quality Team
+domain: Data Quality & Observability
+
+versioning:
+  contract_version: "1.0"
+  generated_date: "2026-06-07T00:00:00Z"
+  last_updated: "2026-06-07T00:00:00Z"
+  status: active
+  change_log:
+    - version: "1.0"
+      date: "2026-06-07"
+      author: LMIP Data Platform Engineering
+      changes: Initial contract creation for quarantine layer batch tracking

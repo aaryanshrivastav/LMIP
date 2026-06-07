@@ -1,0 +1,69 @@
+table_name: workspace.audit.audit_access_events
+layer: audit
+description: Audit log of data access events for security and compliance
+primary_key:
+- access_event_id
+business_keys:
+- user_id
+- access_timestamp
+- resource_name
+columns:
+- name: access_event_id
+  type: STRING
+  nullable: false
+  description: Access event ID
+- name: user_id
+  type: STRING
+  nullable: false
+  description: User identifier
+- name: user_email
+  type: STRING
+  nullable: true
+  description: User email
+- name: access_timestamp
+  type: TIMESTAMP
+  nullable: false
+  description: Access time
+- name: resource_type
+  type: STRING
+  nullable: false
+  description: TABLE, VIEW, NOTEBOOK
+- name: resource_name
+  type: STRING
+  nullable: false
+  description: Resource accessed
+- name: action
+  type: STRING
+  nullable: false
+  description: SELECT, INSERT, UPDATE, DELETE
+- name: rows_affected
+  type: BIGINT
+  nullable: true
+  description: Rows read/modified
+- name: status
+  type: STRING
+  nullable: false
+  description: SUCCESS, DENIED, ERROR
+partitioning:
+  type: date
+  columns:
+  - access_timestamp
+quality_rules:
+- rule: not_null
+  columns:
+  - access_event_id
+  - user_id
+  - access_timestamp
+  - resource_name
+- rule: valid_enum
+  column: status
+  values:
+  - SUCCESS
+  - DENIED
+  - ERROR
+lineage_inputs:
+- workspace.bronze.bronze_api_response_log
+lineage_outputs: []
+generated_date: '2026-06-07T06:20:15.135803'
+contract_version: '1.0'
+status: active

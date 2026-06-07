@@ -1,0 +1,75 @@
+table_name: workspace.audit.audit_dq_results
+layer: audit
+description: Data quality check results and violations log
+primary_key:
+- dq_result_id
+business_keys:
+- table_name
+- rule_name
+- check_timestamp
+columns:
+- name: dq_result_id
+  type: STRING
+  nullable: false
+  description: DQ result ID
+- name: table_name
+  type: STRING
+  nullable: false
+  description: Table checked
+- name: rule_name
+  type: STRING
+  nullable: false
+  description: DQ rule applied
+- name: rule_type
+  type: STRING
+  nullable: false
+  description: NOT_NULL, UNIQUE, RANGE, etc.
+- name: check_timestamp
+  type: TIMESTAMP
+  nullable: false
+  description: When check ran
+- name: status
+  type: STRING
+  nullable: false
+  description: PASSED, FAILED, WARNING
+- name: rows_checked
+  type: BIGINT
+  nullable: true
+  description: Rows evaluated
+- name: rows_failed
+  type: BIGINT
+  nullable: true
+  description: Rows failing rule
+- name: failure_rate
+  type: DECIMAL(5,4)
+  nullable: true
+  description: Failure percentage
+- name: details
+  type: STRING
+  nullable: true
+  description: Additional details/samples
+partitioning:
+  type: date
+  columns:
+  - check_timestamp
+quality_rules:
+- rule: not_null
+  columns:
+  - dq_result_id
+  - table_name
+  - rule_name
+  - status
+- rule: valid_enum
+  column: status
+  values:
+  - PASSED
+  - FAILED
+  - WARNING
+lineage_inputs:
+- workspace.bronze.dedupe_tracking
+- workspace.silver.silver_job_changes
+lineage_outputs:
+- workspace.warehouse.fact_pipeline_runs
+generated_date: '2026-06-07T06:20:15.102621'
+contract_version: '1.0'
+status: active

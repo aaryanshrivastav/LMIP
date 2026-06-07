@@ -1,0 +1,43 @@
+table_name: workspace.gold.gold_hospitality_hiring
+layer: gold
+description: Hospitality sector hiring trends and analysis
+primary_key:
+- hiring_date_sk
+business_keys:
+- hiring_date_sk
+columns:
+- name: hiring_date_sk
+  type: INT
+  nullable: false
+  description: Date key
+- name: total_jobs
+  type: BIGINT
+  nullable: true
+  description: Total hospitality jobs
+- name: new_jobs
+  type: BIGINT
+  nullable: true
+  description: New postings
+- name: top_role
+  type: STRING
+  nullable: true
+  description: Most hired role
+- name: avg_salary
+  type: DECIMAL(15,2)
+  nullable: true
+  description: Average salary
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last refresh
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - hiring_date_sk
+lineage_inputs:
+- workspace.warehouse.fact_job_postings
+lineage_outputs: []
+generated_date: '2026-06-07T06:20:14.951033'
+contract_version: '1.0'
+status: active

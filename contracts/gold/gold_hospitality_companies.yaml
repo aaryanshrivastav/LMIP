@@ -1,0 +1,40 @@
+table_name: workspace.gold.gold_hospitality_companies
+layer: gold
+description: Hospitality companies hiring activity
+primary_key:
+- company_sk
+business_keys:
+- company_sk
+columns:
+- name: company_sk
+  type: BIGINT
+  nullable: false
+  description: Company key
+- name: active_jobs
+  type: BIGINT
+  nullable: true
+  description: Current active jobs
+- name: total_jobs_30d
+  type: BIGINT
+  nullable: true
+  description: Jobs last 30 days
+- name: top_role
+  type: STRING
+  nullable: true
+  description: Most hired role
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last refresh
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - company_sk
+lineage_inputs:
+- workspace.warehouse.fact_job_postings
+- workspace.warehouse.dim_company
+lineage_outputs: []
+generated_date: '2026-06-07T06:20:14.991753'
+contract_version: '1.0'
+status: active

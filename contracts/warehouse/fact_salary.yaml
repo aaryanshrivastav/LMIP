@@ -1,0 +1,74 @@
+table_name: workspace.warehouse.fact_salary
+layer: warehouse
+description: Salary fact table for compensation analysis
+primary_key:
+- fact_salary_sk
+business_keys:
+- job_sk
+- posted_date_sk
+columns:
+- name: fact_salary_sk
+  type: BIGINT
+  nullable: false
+  description: Fact surrogate key
+- name: job_sk
+  type: BIGINT
+  nullable: false
+  description: FK to dim_job
+- name: role_sk
+  type: BIGINT
+  nullable: false
+  description: FK to dim_role
+- name: location_sk
+  type: BIGINT
+  nullable: false
+  description: FK to dim_location
+- name: source_sk
+  type: BIGINT
+  nullable: false
+  description: FK to dim_source
+- name: posted_date_sk
+  type: INT
+  nullable: false
+  description: FK to dim_date
+- name: salary_min
+  type: DECIMAL(15,2)
+  nullable: true
+  description: Minimum salary
+- name: salary_max
+  type: DECIMAL(15,2)
+  nullable: true
+  description: Maximum salary
+- name: salary_midpoint
+  type: DECIMAL(15,2)
+  nullable: true
+  description: Midpoint salary
+- name: salary_currency
+  type: STRING
+  nullable: false
+  description: Currency code
+- name: salary_normalized_usd
+  type: DECIMAL(15,2)
+  nullable: true
+  description: USD-normalized salary
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - fact_salary_sk
+  - job_sk
+  - salary_currency
+- rule: positive_value
+  columns:
+  - salary_min
+  - salary_max
+  - salary_midpoint
+- rule: logical_check
+  description: salary_max >= salary_min
+lineage_inputs:
+- workspace.warehouse.dim_job
+lineage_outputs:
+- workspace.gold.gold_salary_trends
+generated_date: '2026-06-07T06:14:52.805613'
+contract_version: '1.0'
+status: active

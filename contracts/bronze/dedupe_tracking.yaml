@@ -1,0 +1,71 @@
+table_name: workspace.bronze.dedupe_tracking
+layer: bronze
+description: Tracks duplicate payload occurrences in Bronze tables without deleting
+  data
+primary_key:
+- dedupe_id
+business_keys:
+- source_table
+- batch_id
+- dedupe_key_hash
+columns:
+- name: dedupe_id
+  type: STRING
+  nullable: false
+  description: Unique deduplication record ID
+- name: source_table
+  type: STRING
+  nullable: false
+  description: Source table being deduplicated
+- name: batch_id
+  type: STRING
+  nullable: false
+  description: Batch identifier
+- name: dedupe_key_hash
+  type: STRING
+  nullable: false
+  description: Hash of deduplication key columns
+- name: first_seen_record_id
+  type: STRING
+  nullable: true
+  description: First occurrence record ID
+- name: first_seen_batch_id
+  type: STRING
+  nullable: true
+  description: Batch where first seen
+- name: duplicate_count
+  type: INT
+  nullable: false
+  description: Number of duplicate occurrences
+- name: first_seen_timestamp
+  type: TIMESTAMP
+  nullable: true
+  description: First occurrence timestamp
+- name: last_seen_timestamp
+  type: TIMESTAMP
+  nullable: true
+  description: Last occurrence timestamp
+- name: tracking_timestamp
+  type: TIMESTAMP
+  nullable: false
+  description: When dedupe was tracked
+partitioning:
+  type: date
+  columns:
+  - tracking_timestamp
+quality_rules:
+- rule: not_null
+  columns:
+  - dedupe_id
+  - source_table
+  - dedupe_key_hash
+- rule: positive_value
+  columns:
+  - duplicate_count
+lineage_inputs:
+- workspace.bronze.bronze_job_snapshot
+lineage_outputs:
+- workspace.audit.audit_dq_results
+generated_date: '2026-06-07T06:04:54.900181'
+contract_version: '1.0'
+status: active

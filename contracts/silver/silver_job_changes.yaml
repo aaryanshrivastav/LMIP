@@ -1,0 +1,67 @@
+table_name: workspace.silver.silver_job_changes
+layer: silver
+description: Change data capture log tracking all modifications to job postings over
+  time
+primary_key:
+- change_id
+business_keys:
+- enterprise_job_id
+- change_timestamp
+columns:
+- name: change_id
+  type: STRING
+  nullable: false
+  description: Unique change event ID
+- name: enterprise_job_id
+  type: STRING
+  nullable: false
+  description: Job identifier
+- name: change_type
+  type: STRING
+  nullable: false
+  description: INSERT, UPDATE, DELETE, RESTORE
+- name: change_timestamp
+  type: TIMESTAMP
+  nullable: false
+  description: When change occurred
+- name: changed_fields
+  type: ARRAY<STRING>
+  nullable: true
+  description: List of changed fields
+- name: old_hash
+  type: STRING
+  nullable: true
+  description: Previous record hash
+- name: new_hash
+  type: STRING
+  nullable: false
+  description: New record hash
+- name: batch_id
+  type: STRING
+  nullable: false
+  description: Processing batch ID
+partitioning:
+  type: date
+  columns:
+  - change_timestamp
+quality_rules:
+- rule: not_null
+  columns:
+  - change_id
+  - enterprise_job_id
+  - change_type
+- rule: valid_enum
+  column: change_type
+  values:
+  - INSERT
+  - UPDATE
+  - DELETE
+  - RESTORE
+lineage_inputs:
+- workspace.silver.silver_jobs_current
+lineage_outputs:
+- workspace.warehouse.fact_job_lifecycle
+- workspace.audit.audit_dq_results
+generated_date: '2026-06-07T06:07:45.399717'
+contract_version: '1.0'
+status: active

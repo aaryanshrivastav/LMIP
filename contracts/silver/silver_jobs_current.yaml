@@ -1,0 +1,122 @@
+table_name: workspace.silver.silver_jobs_current
+layer: silver
+description: Current state of all job postings after CDC and deduplication. Single
+  source of truth for job data.
+primary_key:
+- enterprise_job_id
+business_keys:
+- source_name
+- source_job_id
+columns:
+- name: enterprise_job_id
+  type: STRING
+  nullable: false
+  description: Enterprise-wide unique job ID
+- name: source_name
+  type: STRING
+  nullable: false
+  description: Source system name
+- name: source_job_id
+  type: STRING
+  nullable: false
+  description: Job ID from source
+- name: source_job_key
+  type: STRING
+  nullable: false
+  description: Composite source key
+- name: company_name_raw
+  type: STRING
+  nullable: true
+  description: Raw company name
+- name: company_name_norm
+  type: STRING
+  nullable: true
+  description: Normalized company name
+- name: title_raw
+  type: STRING
+  nullable: true
+  description: Raw job title
+- name: title_normalized
+  type: STRING
+  nullable: true
+  description: Standardized title
+- name: description_raw
+  type: STRING
+  nullable: true
+  description: Job description text
+- name: location_norm
+  type: STRING
+  nullable: true
+  description: Normalized location
+- name: remote_type
+  type: STRING
+  nullable: true
+  description: Remote work type
+- name: salary_min
+  type: DECIMAL(15,2)
+  nullable: true
+  description: Minimum salary
+- name: salary_max
+  type: DECIMAL(15,2)
+  nullable: true
+  description: Maximum salary
+- name: salary_currency
+  type: STRING
+  nullable: true
+  description: Salary currency code
+- name: employment_type_normalized
+  type: STRING
+  nullable: true
+  description: Employment type
+- name: posted_at
+  type: TIMESTAMP
+  nullable: true
+  description: Posting timestamp
+- name: last_seen
+  type: TIMESTAMP
+  nullable: false
+  description: Last seen timestamp
+- name: is_active
+  type: BOOLEAN
+  nullable: false
+  description: Currently active
+- name: soft_delete_flag
+  type: BOOLEAN
+  nullable: false
+  description: Soft deleted
+- name: record_hash
+  type: STRING
+  nullable: false
+  description: Content hash
+- name: created_at
+  type: TIMESTAMP
+  nullable: false
+  description: First seen timestamp
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last update timestamp
+partitioning:
+  type: date
+  columns:
+  - updated_at
+quality_rules:
+- rule: not_null
+  columns:
+  - enterprise_job_id
+  - source_name
+  - source_job_id
+- rule: unique
+  columns:
+  - enterprise_job_id
+- rule: referential_integrity
+  column: source_name
+  reference_table: workspace.warehouse.dim_source
+lineage_inputs:
+- workspace.silver.silver_jobs_staging
+lineage_outputs:
+- workspace.warehouse.dim_job
+- workspace.warehouse.fact_job_postings
+generated_date: '2026-06-07T06:07:45.358178'
+contract_version: '1.0'
+status: active

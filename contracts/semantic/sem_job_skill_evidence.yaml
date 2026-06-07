@@ -1,0 +1,67 @@
+table_name: workspace.semantic.sem_job_skill_evidence
+layer: semantic
+description: Evidence snippets for job-skill mappings for review and validation
+primary_key:
+- evidence_id
+business_keys:
+- enterprise_job_id
+- skill_id
+columns:
+- name: evidence_id
+  type: STRING
+  nullable: false
+  description: Unique evidence ID
+- name: enterprise_job_id
+  type: STRING
+  nullable: false
+  description: Job identifier
+- name: skill_id
+  type: STRING
+  nullable: false
+  description: Skill identifier
+- name: evidence_text
+  type: STRING
+  nullable: false
+  description: Text snippet showing skill
+- name: context_before
+  type: STRING
+  nullable: true
+  description: Text before mention
+- name: context_after
+  type: STRING
+  nullable: true
+  description: Text after mention
+- name: confidence
+  type: DECIMAL(5,4)
+  nullable: false
+  description: Extraction confidence
+- name: review_status
+  type: STRING
+  nullable: true
+  description: PENDING, APPROVED, REJECTED
+- name: extracted_at
+  type: TIMESTAMP
+  nullable: false
+  description: Extraction timestamp
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - evidence_id
+  - enterprise_job_id
+  - skill_id
+  - evidence_text
+- rule: valid_enum
+  column: review_status
+  values:
+  - PENDING
+  - APPROVED
+  - REJECTED
+  - null
+lineage_inputs:
+- workspace.silver.silver_skill_mapping
+lineage_outputs:
+- workspace.warehouse.bridge_job_skill
+generated_date: '2026-06-07T06:07:45.680110'
+contract_version: '1.0'
+status: active

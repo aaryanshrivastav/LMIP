@@ -1,0 +1,68 @@
+table_name: workspace.audit.audit_pipeline_runs
+layer: audit
+description: Audit log of all pipeline executions for monitoring and compliance
+primary_key:
+- audit_run_id
+business_keys:
+- run_id
+columns:
+- name: audit_run_id
+  type: STRING
+  nullable: false
+  description: Audit record ID
+- name: run_id
+  type: STRING
+  nullable: false
+  description: Pipeline run ID
+- name: pipeline_name
+  type: STRING
+  nullable: false
+  description: Pipeline name
+- name: run_timestamp
+  type: TIMESTAMP
+  nullable: false
+  description: Run start time
+- name: run_duration_seconds
+  type: INT
+  nullable: true
+  description: Duration in seconds
+- name: status
+  type: STRING
+  nullable: false
+  description: SUCCESS, FAILED, PARTIAL
+- name: records_processed
+  type: BIGINT
+  nullable: true
+  description: Total records processed
+- name: error_message
+  type: STRING
+  nullable: true
+  description: Error details if failed
+- name: logged_at
+  type: TIMESTAMP
+  nullable: false
+  description: Audit log timestamp
+partitioning:
+  type: date
+  columns:
+  - run_timestamp
+quality_rules:
+- rule: not_null
+  columns:
+  - audit_run_id
+  - run_id
+  - pipeline_name
+  - status
+- rule: valid_enum
+  column: status
+  values:
+  - SUCCESS
+  - FAILED
+  - PARTIAL
+lineage_inputs:
+- workspace.bronze.bronze_job_snapshot
+lineage_outputs:
+- workspace.warehouse.fact_pipeline_runs
+generated_date: '2026-06-07T06:20:15.049101'
+contract_version: '1.0'
+status: active

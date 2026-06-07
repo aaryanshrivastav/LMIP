@@ -1,0 +1,58 @@
+table_name: workspace.semantic.sem_job_role_map
+layer: semantic
+description: Job title to canonical role mapping for role standardization
+primary_key:
+- title_normalized
+business_keys:
+- canonical_role_id
+columns:
+- name: title_normalized
+  type: STRING
+  nullable: false
+  description: Normalized job title
+- name: canonical_role_id
+  type: STRING
+  nullable: false
+  description: Canonical role identifier
+- name: canonical_role_name
+  type: STRING
+  nullable: false
+  description: Canonical role name
+- name: role_category
+  type: STRING
+  nullable: true
+  description: Broad role category
+- name: role_level
+  type: STRING
+  nullable: true
+  description: Seniority level
+- name: mapping_method
+  type: STRING
+  nullable: false
+  description: How mapping was created
+- name: mapping_confidence
+  type: DECIMAL(5,4)
+  nullable: false
+  description: Mapping confidence score
+- name: created_at
+  type: TIMESTAMP
+  nullable: false
+  description: When mapping was created
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - title_normalized
+  - canonical_role_id
+  - canonical_role_name
+- rule: valid_range
+  column: mapping_confidence
+  min: 0
+  max: 1
+lineage_inputs:
+- workspace.silver.silver_jobs_current
+lineage_outputs:
+- workspace.warehouse.dim_role
+generated_date: '2026-06-07T06:07:45.591591'
+contract_version: '1.0'
+status: active

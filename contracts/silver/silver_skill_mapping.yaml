@@ -1,0 +1,70 @@
+table_name: workspace.silver.silver_skill_mapping
+layer: silver
+description: Extracted skills from job descriptions with evidence and confidence scores
+primary_key:
+- skill_mapping_id
+business_keys:
+- enterprise_job_id
+- skill_name_normalized
+columns:
+- name: skill_mapping_id
+  type: STRING
+  nullable: false
+  description: Unique mapping ID
+- name: enterprise_job_id
+  type: STRING
+  nullable: false
+  description: Job identifier
+- name: skill_name_raw
+  type: STRING
+  nullable: false
+  description: Skill as extracted from text
+- name: skill_name_normalized
+  type: STRING
+  nullable: false
+  description: Canonical skill name
+- name: extraction_method
+  type: STRING
+  nullable: false
+  description: KEYWORD, PATTERN, NLP
+- name: evidence_text
+  type: STRING
+  nullable: true
+  description: Text snippet showing skill mention
+- name: confidence
+  type: DECIMAL(5,4)
+  nullable: false
+  description: Extraction confidence 0-1
+- name: batch_id
+  type: STRING
+  nullable: false
+  description: Processing batch ID
+- name: extracted_at
+  type: TIMESTAMP
+  nullable: false
+  description: Extraction timestamp
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - skill_mapping_id
+  - enterprise_job_id
+  - skill_name_normalized
+- rule: valid_range
+  column: confidence
+  min: 0
+  max: 1
+- rule: valid_enum
+  column: extraction_method
+  values:
+  - KEYWORD
+  - PATTERN
+  - NLP
+lineage_inputs:
+- workspace.silver.silver_jobs_current
+lineage_outputs:
+- workspace.semantic.sem_skill_catalog
+- workspace.warehouse.bridge_job_skill
+generated_date: '2026-06-07T06:07:45.481305'
+contract_version: '1.0'
+status: active

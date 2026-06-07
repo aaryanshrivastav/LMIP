@@ -1,0 +1,70 @@
+table_name: workspace.silver.silver_job_identity_map
+layer: silver
+description: Cross-source job identity linking. Maps duplicate jobs across different
+  data sources.
+primary_key:
+- job_identity_map_sk
+business_keys:
+- job_id_1
+- job_id_2
+columns:
+- name: job_identity_map_sk
+  type: BIGINT
+  nullable: false
+  description: Surrogate key
+- name: job_id_1
+  type: STRING
+  nullable: false
+  description: First job ID
+- name: job_id_2
+  type: STRING
+  nullable: false
+  description: Second job ID (linked)
+- name: source_1
+  type: STRING
+  nullable: false
+  description: Source of job 1
+- name: source_2
+  type: STRING
+  nullable: false
+  description: Source of job 2
+- name: match_rule
+  type: STRING
+  nullable: false
+  description: EXACT, FUZZY_COMPANY, COMPOSITE_HASH
+- name: match_score
+  type: DECIMAL(5,4)
+  nullable: false
+  description: Match confidence 0-1
+- name: assigned_at
+  type: TIMESTAMP
+  nullable: false
+  description: When linkage was created
+- name: batch_id
+  type: STRING
+  nullable: false
+  description: Processing batch ID
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - job_id_1
+  - job_id_2
+  - match_rule
+- rule: valid_range
+  column: match_score
+  min: 0
+  max: 1
+- rule: valid_enum
+  column: match_rule
+  values:
+  - EXACT
+  - FUZZY_COMPANY
+  - COMPOSITE_HASH
+lineage_inputs:
+- workspace.silver.silver_jobs_current
+lineage_outputs:
+- workspace.warehouse.dim_job
+generated_date: '2026-06-07T06:07:45.455782'
+contract_version: '1.0'
+status: active

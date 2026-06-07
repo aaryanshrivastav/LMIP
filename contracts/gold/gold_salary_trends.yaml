@@ -1,0 +1,65 @@
+table_name: workspace.gold.gold_salary_trends
+layer: gold
+description: Salary trends and compensation analytics by role and location
+primary_key:
+- role_sk
+- location_sk
+- trend_date_sk
+business_keys:
+- role_sk
+- location_sk
+- trend_date_sk
+columns:
+- name: role_sk
+  type: BIGINT
+  nullable: false
+  description: Role key
+- name: location_sk
+  type: BIGINT
+  nullable: false
+  description: Location key
+- name: trend_date_sk
+  type: INT
+  nullable: false
+  description: Date key
+- name: avg_salary_min
+  type: DECIMAL(15,2)
+  nullable: true
+  description: Average minimum salary
+- name: avg_salary_max
+  type: DECIMAL(15,2)
+  nullable: true
+  description: Average maximum salary
+- name: median_salary
+  type: DECIMAL(15,2)
+  nullable: true
+  description: Median salary
+- name: p25_salary
+  type: DECIMAL(15,2)
+  nullable: true
+  description: 25th percentile
+- name: p75_salary
+  type: DECIMAL(15,2)
+  nullable: true
+  description: 75th percentile
+- name: sample_size
+  type: BIGINT
+  nullable: true
+  description: Number of job postings
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last refresh
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - role_sk
+  - location_sk
+  - trend_date_sk
+lineage_inputs:
+- workspace.warehouse.fact_salary
+lineage_outputs: []
+generated_date: '2026-06-07T06:20:14.775765'
+contract_version: '1.0'
+status: active

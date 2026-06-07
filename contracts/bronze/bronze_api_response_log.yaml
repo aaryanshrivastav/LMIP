@@ -1,0 +1,68 @@
+table_name: workspace.bronze.bronze_api_response_log
+layer: bronze
+description: Immutable log of all API request/response pairs for audit and replay
+  capability
+primary_key:
+- response_log_id
+business_keys:
+- batch_id
+- request_url
+columns:
+- name: response_log_id
+  type: STRING
+  nullable: false
+  description: Unique log identifier
+- name: source_name
+  type: STRING
+  nullable: false
+  description: API source name
+- name: batch_id
+  type: STRING
+  nullable: false
+  description: Batch identifier
+- name: request_url
+  type: STRING
+  nullable: false
+  description: API endpoint URL
+- name: http_status_code
+  type: INT
+  nullable: false
+  description: HTTP response status code
+- name: retry_count
+  type: INT
+  nullable: true
+  description: Number of retries attempted
+- name: rate_limit_hit
+  type: BOOLEAN
+  nullable: true
+  description: Whether rate limit was hit
+- name: response_time_ms
+  type: INT
+  nullable: true
+  description: Response time in milliseconds
+- name: logged_at
+  type: TIMESTAMP
+  nullable: false
+  description: Log timestamp
+partitioning:
+  type: date
+  columns:
+  - logged_at
+quality_rules:
+- rule: not_null
+  columns:
+  - response_log_id
+  - batch_id
+  - request_url
+- rule: valid_http_status
+  column: http_status_code
+  range:
+  - 100
+  - 599
+lineage_inputs:
+- external_api
+lineage_outputs:
+- workspace.audit.audit_access_events
+generated_date: '2026-06-07T06:04:54.897254'
+contract_version: '1.0'
+status: active

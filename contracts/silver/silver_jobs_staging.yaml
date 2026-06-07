@@ -1,0 +1,112 @@
+table_name: workspace.silver.silver_jobs_staging
+layer: silver
+description: Staging area for standardized jobs before CDC detection. Temporary holding
+  area for batch processing.
+primary_key:
+- source_job_key
+business_keys:
+- source_name
+- source_job_id
+columns:
+- name: source_name
+  type: STRING
+  nullable: false
+  description: Source system name
+- name: source_job_id
+  type: STRING
+  nullable: false
+  description: Job ID from source system
+- name: source_job_key
+  type: STRING
+  nullable: false
+  description: 'Composite key: source_name|source_job_id'
+- name: company_name_raw
+  type: STRING
+  nullable: true
+  description: Raw company name from source
+- name: company_name_norm
+  type: STRING
+  nullable: true
+  description: Normalized company name
+- name: title_raw
+  type: STRING
+  nullable: true
+  description: Raw job title from source
+- name: title_normalized
+  type: STRING
+  nullable: true
+  description: Standardized job title
+- name: description_raw
+  type: STRING
+  nullable: true
+  description: Raw job description
+- name: location_raw
+  type: STRING
+  nullable: true
+  description: Raw location string
+- name: location_norm
+  type: STRING
+  nullable: true
+  description: Normalized location
+- name: remote_type
+  type: STRING
+  nullable: true
+  description: REMOTE, HYBRID, ONSITE
+- name: source_url
+  type: STRING
+  nullable: true
+  description: Source URL for job posting
+- name: posted_at
+  type: TIMESTAMP
+  nullable: true
+  description: Job posting timestamp
+- name: last_seen
+  type: TIMESTAMP
+  nullable: false
+  description: Last observation timestamp
+- name: batch_id
+  type: STRING
+  nullable: false
+  description: Processing batch ID
+- name: processed_at
+  type: TIMESTAMP
+  nullable: false
+  description: Processing timestamp
+- name: record_hash
+  type: STRING
+  nullable: false
+  description: Hash for change detection
+- name: is_active
+  type: BOOLEAN
+  nullable: false
+  description: Active flag
+- name: soft_delete_flag
+  type: BOOLEAN
+  nullable: false
+  description: Soft delete marker
+- name: soft_delete_reason
+  type: STRING
+  nullable: true
+  description: Reason for soft delete
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - source_name
+  - source_job_id
+  - source_job_key
+  - batch_id
+- rule: valid_enum
+  column: remote_type
+  values:
+  - REMOTE
+  - HYBRID
+  - ONSITE
+  - null
+lineage_inputs:
+- workspace.bronze.bronze_job_snapshot
+lineage_outputs:
+- workspace.silver.silver_jobs_current
+generated_date: '2026-06-07T06:07:45.186163'
+contract_version: '1.0'
+status: active

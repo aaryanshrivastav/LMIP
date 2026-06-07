@@ -1,0 +1,228 @@
+# ========================================
+# LMIP Schema Contract: quarantine_jobs
+# ========================================
+
+table_name: workspace.quarantine.quarantine_jobs
+layer: quarantine
+description: >
+  Records that failed data quality validation and require human review.
+  Tracks quarantine lifecycle from initial failure through resolution (reprocess or discard).
+  Non-blocking quality gate that isolates problematic data without stopping pipeline execution.
+
+primary_key:
+  - quarantine_id
+
+business_keys:
+  - enterprise_job_id
+  - quarantine_reason
+
+columns:
+  - name: quarantine_id
+    type: STRING
+    nullable: false
+    description: Unique identifier for this quarantine entry (UUID)
+    
+  - name: enterprise_job_id
+    type: STRING
+    nullable: false
+    description: Foreign key to silver.silver_jobs_current for the quarantined job record
+    
+  - name: source_name
+    type: STRING
+    nullable: false
+    description: Data source that originated this record (e.g., linkedin, indeed, greenhouse)
+    
+  - name: source_job_id
+    type: STRING
+    nullable: true
+    description: Original job ID from the source system
+    
+  - name: job_title
+    type: STRING
+    nullable: true
+    description: Job title from the record for reference during human review
+    
+  - name: title_raw
+    type: STRING
+    nullable: true
+    description: Raw job title before standardization
+    
+  - name: company_name
+    type: STRING
+    nullable: true
+    description: Company name from the record for reference during human review
+    
+  - name: company_name_raw
+    type: STRING
+    nullable: true
+    description: Raw company name before standardization
+    
+  - name: quarantine_reason
+    type: STRING
+    nullable: false
+    description: >
+      Human-readable reason for quarantine.
+      Common values: DQ_FAILURE, PARSE_ERROR, REFERENTIAL_INTEGRITY, 
+      BUSINESS_RULE_VIOLATION, DUPLICATE_DETECTED
+    
+  - name: failed_rule_name
+    type: STRING
+    nullable: false
+    description: Specific DQ rule that failed (e.g., company_name_not_null, salary_range_valid)
+    
+  - name: failure_stage
+    type: STRING
+    nullable: false
+    description: Pipeline stage where failure occurred (e.g., bronze_validation, silver_standardization)
+    
+  - name: severity
+    type: STRING
+    nullable: false
+    description: Failure severity level - ERROR (blocks downstream), WARN (flagged for review)
+    
+  - name: quarantine_severity
+    type: STRING
+    nullable: true
+    description: Duplicate/alias of severity field for backward compatibility
+    
+  - name: raw_payload
+    type: STRING
+    nullable: true
+    description: Original JSON payload of the failed record for root cause analysis
+    
+  - name: reprocess_status
+    type: STRING
+    nullable: false
+    description: >
+      Current lifecycle status of the quarantined record.
+      Values: PENDING, REPROCESS, REPROCESSED, DISCARDED, REPROCESS_FAILED, RESOLVED
+    
+  - name: reprocess_reason
+    type: STRING
+    nullable: true
+    description: Human reviewer's documented reason for reprocess or discard decision
+    
+  - name: reprocess_batch_id
+    type: STRING
+    nullable: true
+    description: Batch identifier for tracking bulk reprocess or discard operations
+    
+  - name: reviewed_by
+    type: STRING
+    nullable: true
+    description: Email address of the reviewer who made the reprocess/discard decision
+    
+  - name: reviewed_at
+    type: TIMESTAMP
+    nullable: true
+    description: Timestamp when human review decision was made
+    
+  - name: quarantined_at
+    type: TIMESTAMP
+    nullable: false
+    description: Timestamp when record was first routed to quarantine
+    
+  - name: reprocessed_at
+    type: TIMESTAMP
+    nullable: true
+    description: Timestamp when record was reprocessed (attempted to flow back to Silver)
+    
+  - name: resolved_at
+    type: TIMESTAMP
+    nullable: true
+    description: Timestamp when record lifecycle completed (successfully reprocessed or discarded)
+
+partitioning:
+  type: date
+  columns:
+    - quarantined_at
+  rationale: Query patterns typically filter by quarantine date for retention and review workflows
+
+quality_rules:
+  - rule: not_null
+    columns:
+      - quarantine_id
+      - enterprise_job_id
+      - source_name
+      - quarantine_reason
+      - failed_rule_name
+      - failure_stage
+      - severity
+      - reprocess_status
+      - quarantined_at
+    description: Core tracking fields must always be populated
+    
+  - rule: unique
+    columns:
+      - quarantine_id
+    description: Each quarantine entry must have a unique identifier
+    
+  - rule: referential_integrity
+    columns:
+      - enterprise_job_id
+    foreign_table: workspace.silver.silver_jobs_current
+    foreign_key: enterprise_job_id
+    description: Quarantined records must reference valid job in Silver layer
+    
+  - rule: enum_validation
+    columns:
+      - reprocess_status
+    allowed_values:
+      - PENDING
+      - REPROCESS
+      - REPROCESSED
+      - DISCARDED
+      - REPROCESS_FAILED
+      - RESOLVED
+    description: Status must follow defined lifecycle states
+    
+  - rule: enum_validation
+    columns:
+      - severity
+    allowed_values:
+      - ERROR
+      - WARN
+    description: Severity must be ERROR or WARN
+    
+  - rule: temporal_integrity
+    description: reviewed_at must be after or equal to quarantined_at
+    condition: reviewed_at IS NULL OR reviewed_at >= quarantined_at
+    
+  - rule: business_logic
+    description: Records marked REPROCESSED or DISCARDED must have resolved_at timestamp
+    condition: (reprocess_status IN ('REPROCESSED', 'DISCARDED', 'RESOLVED') AND resolved_at IS NOT NULL) OR reprocess_status NOT IN ('REPROCESSED', 'DISCARDED', 'RESOLVED')
+    
+  - rule: retention_policy
+    description: PENDING records older than 60 days require escalation
+    condition: datediff(current_timestamp(), quarantined_at) < 60 OR reprocess_status != 'PENDING'
+    severity: WARN
+
+lineage_inputs:
+  - workspace.silver.silver_jobs_current
+  - workspace.silver.silver_dq_validate
+  
+lineage_outputs:
+  - workspace.silver.silver_jobs_current (via reinstatement)
+  - workspace.audit.audit_dq_results
+  - workspace.gold.gold_pipeline_health
+
+refresh_schedule: Continuous (event-driven via silver_dq_validate failures)
+
+sla:
+  freshness: Real-time (routed immediately on DQ failure)
+  resolution_target: 7 days for PENDING records
+  availability: 99.9%
+
+data_steward: Data Quality Team
+domain: Data Quality & Observability
+
+versioning:
+  contract_version: "1.0"
+  generated_date: "2026-06-07T00:00:00Z"
+  last_updated: "2026-06-07T00:00:00Z"
+  status: active
+  change_log:
+    - version: "1.0"
+      date: "2026-06-07"
+      author: LMIP Data Platform Engineering
+      changes: Initial contract creation for quarantine layer

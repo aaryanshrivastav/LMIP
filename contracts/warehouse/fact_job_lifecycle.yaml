@@ -1,0 +1,71 @@
+table_name: workspace.warehouse.fact_job_lifecycle
+layer: warehouse
+description: Job lifecycle metrics tracking job duration, change frequency, and lifecycle
+  events
+primary_key:
+- fact_job_lifecycle_sk
+business_keys:
+- enterprise_job_id
+columns:
+- name: fact_job_lifecycle_sk
+  type: BIGINT
+  nullable: false
+  description: Fact surrogate key
+- name: job_sk
+  type: BIGINT
+  nullable: false
+  description: FK to dim_job
+- name: company_sk
+  type: BIGINT
+  nullable: false
+  description: FK to dim_company
+- name: role_sk
+  type: BIGINT
+  nullable: false
+  description: FK to dim_role
+- name: first_seen_date_sk
+  type: INT
+  nullable: false
+  description: FK to dim_date (first seen)
+- name: last_seen_date_sk
+  type: INT
+  nullable: false
+  description: FK to dim_date (last seen)
+- name: days_active
+  type: INT
+  nullable: true
+  description: Total days job was active
+- name: update_count
+  type: INT
+  nullable: true
+  description: Number of updates
+- name: soft_delete_count
+  type: INT
+  nullable: true
+  description: Number of soft deletes
+- name: restore_count
+  type: INT
+  nullable: true
+  description: Number of restorations
+- name: is_currently_active
+  type: BOOLEAN
+  nullable: false
+  description: Current active status
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - fact_job_lifecycle_sk
+  - job_sk
+- rule: positive_value
+  columns:
+  - days_active
+  - update_count
+lineage_inputs:
+- workspace.silver.silver_jobs_current
+- workspace.silver.silver_job_changes
+lineage_outputs:
+- workspace.gold.gold_pipeline_health
+generated_date: '2026-06-07T06:14:52.779819'
+contract_version: '1.0'
+status: active

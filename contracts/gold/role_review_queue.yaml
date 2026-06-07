@@ -1,0 +1,55 @@
+table_name: workspace.gold.role_review_queue
+layer: gold
+description: Queue of job roles requiring manual review and validation
+primary_key:
+- review_id
+business_keys:
+- enterprise_job_id
+columns:
+- name: review_id
+  type: STRING
+  nullable: false
+  description: Review queue entry ID
+- name: enterprise_job_id
+  type: STRING
+  nullable: false
+  description: Job identifier
+- name: title_raw
+  type: STRING
+  nullable: false
+  description: Raw job title
+- name: suggested_role
+  type: STRING
+  nullable: true
+  description: AI-suggested role
+- name: confidence
+  type: DECIMAL(5,4)
+  nullable: true
+  description: Suggestion confidence
+- name: review_status
+  type: STRING
+  nullable: false
+  description: PENDING, APPROVED, REJECTED
+- name: created_at
+  type: TIMESTAMP
+  nullable: false
+  description: Queue entry timestamp
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - review_id
+  - enterprise_job_id
+  - review_status
+- rule: valid_enum
+  column: review_status
+  values:
+  - PENDING
+  - APPROVED
+  - REJECTED
+lineage_inputs:
+- workspace.semantic.sem_job_role_map
+lineage_outputs: []
+generated_date: '2026-06-07T06:20:15.019517'
+contract_version: '1.0'
+status: active

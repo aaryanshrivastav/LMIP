@@ -1,0 +1,71 @@
+table_name: workspace.warehouse.dim_company
+layer: warehouse
+description: Company dimension with canonical company names and attributes (SCD Type
+  1)
+primary_key:
+- company_sk
+business_keys:
+- company_name_canonical
+columns:
+- name: company_sk
+  type: BIGINT
+  nullable: false
+  description: Surrogate key
+- name: company_name
+  type: STRING
+  nullable: false
+  description: Display company name
+- name: company_name_canonical
+  type: STRING
+  nullable: false
+  description: Canonical name (business key)
+- name: company_match_method
+  type: STRING
+  nullable: true
+  description: Method used for canonicalization
+- name: match_confidence
+  type: DECIMAL(5,4)
+  nullable: true
+  description: Canonicalization confidence
+- name: alias_count
+  type: INT
+  nullable: true
+  description: Number of name variations
+- name: sector_sk
+  type: BIGINT
+  nullable: true
+  description: FK to dim_sector
+- name: sector_name
+  type: STRING
+  nullable: true
+  description: Sector name (denormalized)
+- name: is_active
+  type: BOOLEAN
+  nullable: false
+  description: Active flag
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last update timestamp
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - company_sk
+  - company_name_canonical
+- rule: unique
+  columns:
+  - company_sk
+  - company_name_canonical
+- rule: referential_integrity
+  column: sector_sk
+  reference_table: workspace.warehouse.dim_sector
+lineage_inputs:
+- workspace.semantic.sem_company_canonical
+- workspace.semantic.sem_company_map
+lineage_outputs:
+- workspace.warehouse.dim_job
+- workspace.warehouse.fact_job_postings
+generated_date: '2026-06-07T06:14:52.481748'
+contract_version: '1.0'
+status: active
