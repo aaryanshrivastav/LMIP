@@ -1,0 +1,145 @@
+{
+  "name": "LMIP_Silver_Processing",
+  "email_notifications": {
+    "on_failure": ["aaryan.shrivastav1403@gmail.com"],
+    "no_alert_for_skipped_runs": false
+  },
+  "timeout_seconds": 10800,
+  "trigger": {
+    "pause_status": "UNPAUSED",
+    "file_arrival": {
+      "url": "dbfs:/databricks/workflows/triggers/bronze_batch_complete",
+      "min_time_between_triggers_seconds": 3600
+    }
+  },
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "Silver_Standardize_Jobs",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_standardize_jobs",
+        "base_parameters": {
+          "mode": "incremental"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 3600,
+      "max_retries": 2,
+      "min_retry_interval_millis": 60000,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Silver_Detect_CDC",
+      "depends_on": [{"task_key": "Silver_Standardize_Jobs"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_detect_cdc",
+        "base_parameters": {
+          "enable_deletes": "true"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 3600,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Silver_Apply_Soft_Delete_Restore",
+      "depends_on": [{"task_key": "Silver_Detect_CDC"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_apply_soft_delete_restore",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 1800,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Silver_DQ_Validate",
+      "depends_on": [{"task_key": "Silver_Apply_Soft_Delete_Restore"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_dq_validate",
+        "base_parameters": {
+          "validation_level": "standard",
+          "quarantine_on_fail": "true"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 2400,
+      "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Silver_Skill_Extract",
+      "depends_on": [{"task_key": "Silver_DQ_Validate"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_skill_extract",
+        "base_parameters": {
+          "extraction_method": "all"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 3600,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Silver_Sector_Assign",
+      "depends_on": [{"task_key": "Silver_DQ_Validate"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_sector_assign",
+        "base_parameters": {
+          "confidence_threshold": "0.7",
+          "queue_low_confidence": "true"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 3600,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Silver_Job_Identity_Map",
+      "depends_on": [
+        {"task_key": "Silver_Skill_Extract"},
+        {"task_key": "Silver_Sector_Assign"}
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_job_identity_map",
+        "base_parameters": {
+          "match_threshold": "0.75"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 3600,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    }
+  ],
+  "format": "MULTI_TASK",
+  "queue": {
+    "enabled": true
+  },
+  "environments": [
+    {
+      "environment_key": "Default",
+      "spec": {
+        "environment_version": "5"
+      }
+    }
+  ],
+  "performance_target": "PERFORMANCE_OPTIMIZED"
+}

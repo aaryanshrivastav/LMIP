@@ -1,0 +1,89 @@
+{
+  "name": "LMIP_Publishing",
+  "email_notifications": {
+    "on_success": ["aaryan.shrivastav1403@gmail.com"],
+    "on_failure": ["aaryan.shrivastav1403@gmail.com"],
+    "no_alert_for_skipped_runs": false
+  },
+  "timeout_seconds": 10800,
+  "trigger": {
+    "pause_status": "UNPAUSED",
+    "file_arrival": {
+      "url": "dbfs:/databricks/workflows/triggers/gold_build_complete",
+      "min_time_between_triggers_seconds": 7200
+    }
+  },
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "Publish_CSV_Snapshot_Export",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/publish/publish_csv_snapshot_export",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 3600,
+      "max_retries": 2,
+      "min_retry_interval_millis": 120000,
+      "retry_on_timeout": true,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Publish_Manifest_Write",
+      "depends_on": [{"task_key": "Publish_CSV_Snapshot_Export"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/publish/publish_manifest_write",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 600,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Publish_Load_Order_Check",
+      "depends_on": [{"task_key": "Publish_Manifest_Write"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/publish/publish_load_order_check",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 600,
+      "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Publish_Supabase_Upsert",
+      "depends_on": [{"task_key": "Publish_Load_Order_Check"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/publish/publish_supabase_upsert",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 3600,
+      "max_retries": 3,
+      "min_retry_interval_millis": 180000,
+      "retry_on_timeout": true,
+      "email_notifications": {
+        "on_failure": ["aaryan.shrivastav1403@gmail.com"]
+      },
+      "environment_key": "Default"
+    }
+  ],
+  "format": "MULTI_TASK",
+  "queue": {
+    "enabled": true
+  },
+  "environments": [
+    {
+      "environment_key": "Default",
+      "spec": {
+        "environment_version": "5"
+      }
+    }
+  ],
+  "performance_target": "PERFORMANCE_OPTIMIZED"
+}
