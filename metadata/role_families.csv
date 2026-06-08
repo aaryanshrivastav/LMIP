@@ -1,0 +1,13 @@
+family_key,family_name,sector_key,description
+ENG,Engineering,TECH,"Software engineering and technical development roles"
+DATA,Data & Analytics,TECH,"Data science, analytics, and business intelligence roles"
+ITOPS,IT Operations,TECH,"Infrastructure, systems, and operations roles"
+HOSP_OPS,Hospitality Operations,HOSP,"Front office, guest services, and property management"
+HOSP_FB,Food & Beverage,HOSP,"Culinary, restaurant, and bar operations"
+CLIN_CARE,Clinical Care,HEAL,"Direct patient care and clinical services"
+HEAL_ADMIN,Healthcare Administration,HEAL,"Healthcare operations, coding, and records management"
+FIN_CORP,Corporate Finance,FIN,"Financial planning, analysis, and treasury"
+FIN_ACCT,Accounting,FIN,"Accounting, auditing, and tax services"
+RISK,Risk & Compliance,FIN,"Risk management, compliance, and regulatory roles"
+RETAIL_OPS,Retail Operations,RETAIL,"Store operations, merchandising, and inventory"
+MFG_OPS,Manufacturing Operations,MFG,"Production, quality, and supply chain roles"
