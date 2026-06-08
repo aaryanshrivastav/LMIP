@@ -114,7 +114,7 @@
       "environment_key": "Default"
     },
     {
-      "task_key": "Gold_Hiring_Activity",
+      "task_key": "Gold_Hospitality_Hiring",
       "depends_on": [
         {
           "task_key": "Gold_Sector_Overview"
@@ -122,7 +122,7 @@
       ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_hiring_activity",
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_hospitality_hiring",
         "source": "WORKSPACE"
       },
       "timeout_seconds": 1800,
@@ -131,7 +131,7 @@
       "environment_key": "Default"
     },
     {
-      "task_key": "Gold_Skill_Demand_By_Sector",
+      "task_key": "Gold_Hospitality_Skills",
       "depends_on": [
         {
           "task_key": "Gold_Skill_Demand"
@@ -139,7 +139,7 @@
       ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_skill_demand_by_sector",
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_hospitality_skills",
         "source": "WORKSPACE"
       },
       "timeout_seconds": 1800,
@@ -148,7 +148,7 @@
       "environment_key": "Default"
     },
     {
-      "task_key": "Gold_Company_Activity",
+      "task_key": "Gold_Hospitality_Companies",
       "depends_on": [
         {
           "task_key": "Gold_Company_Hiring"
@@ -156,7 +156,7 @@
       ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_company_activity",
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_hospitality_companies",
         "source": "WORKSPACE"
       },
       "timeout_seconds": 1800,

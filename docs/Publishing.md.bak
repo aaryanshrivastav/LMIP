@@ -194,9 +194,9 @@ Facts (depend on dimensions)
   → gold_company_hiring
 
 Aggregates (depend on facts)
-  → gold_hiring_activity
-  → gold_skill_demand_by_sector
-  → gold_company_activity
+  → gold_hospitality_hiring
+  → gold_hospitality_skills
+  → gold_hospitality_companies
 ```
 
 ### Validation Logic

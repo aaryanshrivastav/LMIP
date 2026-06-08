@@ -256,7 +256,7 @@
 * `gold_location_trends` - Geographic hiring trends
 * `gold_sector_overview` - Sector-level aggregations
 * `gold_pipeline_health` - Operational monitoring
-* `gold_hospitality_*` - Multi-sector analytics with sector dimension
+* `gold_hospitality_*` - Industry-specific analytics (hospitality sector)
 
 **Key Metrics**:
 * Salary percentiles (P25, P50, P75, P90)

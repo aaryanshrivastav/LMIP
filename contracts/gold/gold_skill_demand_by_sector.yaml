@@ -1,13 +1,19 @@
-table_name: workspace.gold.gold_hospitality_skills
+table_name: workspace.gold.gold_skill_demand_by_sector
 layer: gold
-description: Hospitality industry specific skill demand analysis
+description: Skill demand analysis by sector
 primary_key:
+- sector_sk
 - skill_sk
 - trend_date_sk
 business_keys:
+- sector_sk
 - skill_sk
 - trend_date_sk
 columns:
+- name: sector_sk
+  type: BIGINT
+  nullable: false
+  description: Sector foreign key
 - name: skill_sk
   type: BIGINT
   nullable: false
@@ -32,10 +38,12 @@ columns:
   type: TIMESTAMP
   nullable: false
   description: Last refresh
-partitioning: null
+partitioning:
+- sector_sk
 quality_rules:
 - rule: not_null
   columns:
+  - sector_sk
   - skill_sk
   - trend_date_sk
 lineage_inputs:

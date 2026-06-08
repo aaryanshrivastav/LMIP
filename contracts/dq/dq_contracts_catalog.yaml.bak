@@ -752,8 +752,8 @@ gold_layer:
       refresh_schedule: "Daily"
       validation_rules: []
       
-    gold_company_activity:
-      description: "Company activity by sector"
+    gold_hospitality_companies:
+      description: "Hospitality sector companies"
       refresh_schedule: "Weekly"
       validation_rules:
         - rule_id: SECT_009
@@ -761,13 +761,13 @@ gold_layer:
           severity: WARNING
           action: LOG_WARNING
           
-    gold_hiring_activity:
-      description: "Hiring metrics by sector"
+    gold_hospitality_hiring:
+      description: "Hospitality sector hiring metrics"
       refresh_schedule: "Daily"
       validation_rules: []
       
-    gold_skill_demand_by_sector:
-      description: "Skill demand by sector"
+    gold_hospitality_skills:
+      description: "Hospitality sector skill demand"
       refresh_schedule: "Daily"
       validation_rules: []
       

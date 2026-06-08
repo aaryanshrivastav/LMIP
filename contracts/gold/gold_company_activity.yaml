@@ -1,11 +1,17 @@
-table_name: workspace.gold.gold_hospitality_companies
+table_name: workspace.gold.gold_company_activity
 layer: gold
-description: Hospitality companies hiring activity
+description: Company hiring activity metrics by sector
 primary_key:
+- sector_sk
 - company_sk
 business_keys:
+- sector_sk
 - company_sk
 columns:
+- name: sector_sk
+  type: BIGINT
+  nullable: false
+  description: Sector foreign key
 - name: company_sk
   type: BIGINT
   nullable: false
@@ -26,14 +32,17 @@ columns:
   type: TIMESTAMP
   nullable: false
   description: Last refresh
-partitioning: null
+partitioning:
+- sector_sk
 quality_rules:
 - rule: not_null
   columns:
+  - sector_sk
   - company_sk
 lineage_inputs:
 - workspace.warehouse.fact_job_postings
 - workspace.warehouse.dim_company
+- workspace.warehouse.dim_sector
 lineage_outputs: []
 generated_date: '2026-06-07T06:20:14.991753'
 contract_version: '1.0'

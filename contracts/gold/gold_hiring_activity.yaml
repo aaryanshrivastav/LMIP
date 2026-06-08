@@ -1,11 +1,17 @@
-table_name: workspace.gold.gold_hospitality_hiring
+table_name: workspace.gold.gold_hiring_activity
 layer: gold
-description: Hospitality sector hiring trends and analysis
+description: Hiring trends and analysis across sectors
 primary_key:
+- sector_sk
 - hiring_date_sk
 business_keys:
+- sector_sk
 - hiring_date_sk
 columns:
+- name: sector_sk
+  type: BIGINT
+  nullable: false
+  description: Sector foreign key
 - name: hiring_date_sk
   type: INT
   nullable: false
@@ -13,7 +19,7 @@ columns:
 - name: total_jobs
   type: BIGINT
   nullable: true
-  description: Total hospitality jobs
+  description: Total jobs in sector
 - name: new_jobs
   type: BIGINT
   nullable: true
@@ -30,13 +36,16 @@ columns:
   type: TIMESTAMP
   nullable: false
   description: Last refresh
-partitioning: null
+partitioning:
+- sector_sk
 quality_rules:
 - rule: not_null
   columns:
+  - sector_sk
   - hiring_date_sk
 lineage_inputs:
 - workspace.warehouse.fact_job_postings
+- workspace.warehouse.dim_sector
 lineage_outputs: []
 generated_date: '2026-06-07T06:20:14.951033'
 contract_version: '1.0'

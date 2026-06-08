@@ -30,7 +30,7 @@ Dimensions must be exported before facts to maintain referential integrity.
 **Export Sequence:**
 
 7. **gold_company_hiring** - Depends on: dim_sector, dim_company, dim_location
-8. **gold_company_activity** - Depends on: dim_sector, dim_company
+8. **gold_hospitality_companies** - Depends on: dim_sector, dim_company
 9. **gold_location_trends** - Depends on: dim_sector, dim_location
 10. **gold_salary_trends** - Depends on: dim_sector, dim_role, dim_location, dim_company
 11. **gold_skill_demand** - Depends on: dim_sector, dim_role, dim_location, dim_skill
@@ -62,7 +62,7 @@ Phase 2 (Gold Facts - Depends on Phase 1)
 │   ├── → dim_sector
 │   ├── → dim_company
 │   └── → dim_location
-├── gold_company_activity
+├── gold_hospitality_companies
 │   ├── → dim_sector
 │   └── → dim_company
 ├── gold_location_trends
@@ -183,7 +183,7 @@ lmip_export_YYYYMMDD_HHMMSS/
 │   └── dim_source.csv
 ├── facts/
 │   ├── gold_company_hiring.csv
-│   ├── gold_company_activity.csv
+│   ├── gold_hospitality_companies.csv
 │   ├── gold_location_trends.csv
 │   ├── gold_salary_trends.csv
 │   └── gold_skill_demand.csv
@@ -451,7 +451,7 @@ LIMIT 1;
 
 -- Step 2: Truncate tables (DANGER: Backup first!)
 TRUNCATE TABLE gold_company_hiring CASCADE;
-TRUNCATE TABLE gold_company_activity CASCADE;
+TRUNCATE TABLE gold_hospitality_companies CASCADE;
 TRUNCATE TABLE gold_location_trends CASCADE;
 TRUNCATE TABLE gold_salary_trends CASCADE;
 TRUNCATE TABLE gold_skill_demand CASCADE;
@@ -718,17 +718,17 @@ CREATE TABLE gold_company_hiring (
 );
 ```
 
-#### gold_company_activity
+#### gold_hospitality_companies
 ```sql
-CREATE TABLE gold_company_activity (
-  activity_date_sk INTEGER NOT NULL,
+CREATE TABLE gold_hospitality_companies (
+  hospitality_date_sk INTEGER NOT NULL,
   sector_sk INTEGER NOT NULL REFERENCES dim_sector(sector_sk),
   company_sk INTEGER NOT NULL REFERENCES dim_company(company_sk),
   active_jobs INTEGER NOT NULL DEFAULT 0,
   new_jobs INTEGER NOT NULL DEFAULT 0,
   closed_jobs INTEGER NOT NULL DEFAULT 0,
   net_change INTEGER NOT NULL DEFAULT 0,
-  PRIMARY KEY (activity_date_sk, sector_sk, company_sk)
+  PRIMARY KEY (hospitality_date_sk, sector_sk, company_sk)
 );
 ```
 

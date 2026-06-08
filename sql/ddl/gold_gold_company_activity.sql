@@ -1,23 +1,24 @@
 -- ============================================================================
--- Table: workspace.gold.gold_hospitality_companies
+-- Table: workspace.gold.gold_company_activity
 -- Layer: GOLD
--- Description: Hospitality companies hiring activity
+-- Description: Company hiring activity metrics by sector
 -- ============================================================================
--- Purpose: Physical table definition for gold_hospitality_companies
--- Dependencies: workspace.warehouse.fact_job_postings, workspace.warehouse.dim_company
--- Expected Output: Table created with 5 columns
+-- Purpose: Physical table definition for gold_company_activity
+-- Dependencies: workspace.warehouse.fact_job_postings, workspace.warehouse.dim_company, workspace.warehouse.dim_sector
+-- Expected Output: Table created with 6 columns
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS workspace.gold.gold_hospitality_companies (
+CREATE OR REPLACE TABLE workspace.gold.gold_company_activity (
+  sector_sk BIGINT NOT NULL COMMENT 'Sector foreign key',
   company_sk BIGINT NOT NULL COMMENT 'Company key',
   active_jobs BIGINT COMMENT 'Current active jobs',
   total_jobs_30d BIGINT COMMENT 'Jobs last 30 days',
   top_role STRING COMMENT 'Most hired role',
-  updated_at TIMESTAMP NOT NULL COMMENT 'Last refresh'
-,
-  PRIMARY KEY (company_sk)
+  updated_at TIMESTAMP NOT NULL COMMENT 'Last refresh',
+  PRIMARY KEY (sector_sk, company_sk)
 )
-COMMENT 'Hospitality companies hiring activity'
+COMMENT 'Company hiring activity metrics by sector'
+PARTITIONED BY (sector_sk)
 USING DELTA
 TBLPROPERTIES (
   'delta.enableChangeDataFeed' = 'true',

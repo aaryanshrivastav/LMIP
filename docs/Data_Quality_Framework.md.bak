@@ -657,15 +657,15 @@ This document defines the comprehensive Data Quality (DQ) Framework for the Labo
 * **Refresh:** Daily
 * **Validation Rules:** 0
 
-#### gold_company_activity
+#### gold_hospitality_companies
 * **Refresh:** Weekly
 * **Validation Rules:** 1 (SECT_009)
 
-#### gold_hiring_activity
+#### gold_hospitality_hiring
 * **Refresh:** Daily
 * **Validation Rules:** 0
 
-#### gold_skill_demand_by_sector
+#### gold_hospitality_skills
 * **Refresh:** Daily
 * **Validation Rules:** 0
 
@@ -808,7 +808,7 @@ This document defines the comprehensive Data Quality (DQ) Framework for the Labo
 | SECT_006 | Sector Classification | sem_sector_map | WARNING | LOG_WARNING | Valid normalization method |
 | SECT_007 | Sector Classification | sem_sector_map | WARNING | LOG_WARNING | Valid taxonomy type |
 | SECT_008 | Sector Classification | dim_sector | WARNING | LOG_WARNING | Sector family consistency |
-| SECT_009 | Sector Classification | gold_company_activity | WARNING | LOG_WARNING | Hospitality coverage |
+| SECT_009 | Sector Classification | gold_hospitality_companies | WARNING | LOG_WARNING | Hospitality coverage |
 | **SALARY VALIDATION** |
 | SAL_001 | Salary Validation | fact_salary | ERROR | QUARANTINE | Salary min < max |
 | SAL_002 | Salary Validation | fact_salary | ERROR | QUARANTINE | Positive salary values |

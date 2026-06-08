@@ -159,7 +159,7 @@ psql $DATABASE_URL -f scripts/validate_import.sql
 
 **Gold Facts (5 tables)**
 * gold_company_hiring - Company hiring activity
-* gold_company_activity - Company activity metrics by sector
+* gold_hospitality_companies - Hospitality sector metrics
 * gold_salary_trends - Salary analytics
 * gold_skill_demand - Skill demand trends
 * gold_location_trends - Geographic job market trends
