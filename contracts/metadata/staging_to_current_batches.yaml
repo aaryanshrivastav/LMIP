@@ -1,0 +1,96 @@
+# Contract: workspace.metadata.staging_to_current_batches
+# Description: Tracks which staging batches have been processed through CDC to current
+# Owner: silver_detect_cdc notebook
+# Type: Metadata (shadow table)
+
+table:
+  catalog: workspace
+  schema: metadata
+  name: staging_to_current_batches
+  table_format: DELTA
+  primary_key:
+    - batch_id
+    - source_name
+  comment: "Tracks which staging batches have been processed through CDC to current. Used by silver_detect_cdc to ensure idempotent batch processing."
+
+columns:
+  - name: batch_id
+    type: STRING
+    nullable: true
+    comment: "Staging batch identifier that was processed through CDC"
+    
+  - name: source_name
+    type: STRING
+    nullable: true
+    comment: "Data source name (e.g., 'remotive', 'arbeitnow')"
+    
+  - name: inserts
+    type: INT
+    nullable: true
+    comment: "Number of INSERT operations performed for this batch"
+    
+  - name: updates
+    type: INT
+    nullable: true
+    comment: "Number of UPDATE operations performed for this batch"
+    
+  - name: deletes
+    type: INT
+    nullable: true
+    comment: "Number of DELETE operations performed for this batch"
+    
+  - name: processed_at
+    type: TIMESTAMP
+    nullable: true
+    comment: "Timestamp when the batch was processed through CDC"
+    
+  - name: run_id
+    type: STRING
+    nullable: true
+    comment: "Workflow run identifier (format: YYYYMMDD_HHMMSS)"
+    
+  - name: status
+    type: STRING
+    nullable: true
+    comment: "Processing status: 'success' or 'failed'"
+
+data_quality:
+  - rule: primary_key_unique
+    level: ERROR
+    description: "Composite key (batch_id, source_name) must be unique"
+    
+  - rule: status_values
+    level: ERROR
+    description: "Status must be 'success' or 'failed'"
+    sql: "status IN ('success', 'failed')"
+    
+  - rule: non_negative_counts
+    level: ERROR
+    description: "Insert, update, delete counts must be non-negative"
+    sql: "inserts >= 0 AND updates >= 0 AND deletes >= 0"
+    
+  - rule: processed_at_not_future
+    level: WARNING
+    description: "Processed timestamp should not be in the future"
+    sql: "processed_at <= CURRENT_TIMESTAMP()"
+
+usage:
+  created_by: silver_detect_cdc
+  accessed_by:
+    - silver_detect_cdc
+  purpose: "CDC batch processing tracking and idempotency control"
+  
+lineage:
+  upstream: []
+  downstream:
+    - silver.silver_jobs_current
+    
+notes: |
+  This is a shadow/metadata table that supports the CDC detection process.
+  It is not directly queried by end users or downstream pipelines.
+  
+  Key behaviors:
+  - Each (batch_id, source_name) pair is recorded once per successful CDC run
+  - Failed batches are retried by detecting missing entries
+  - The silver_detect_cdc notebook queries this table to find unprocessed staging batches
+  - Idempotent: safe to re-run silver_detect_cdc - only unprocessed batches are handled

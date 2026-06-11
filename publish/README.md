@@ -24,12 +24,12 @@ lmip_publish/
 ├── README.md (this file)
 ├── publish_contracts.md (comprehensive specification)
 ├── scripts/
-│   ├── export_bundle.py (Databricks: export to CSV)
+│   ├── export_bundle.py (Databricks: export to CSV) ← USE THIS
 │   ├── load_bundle.py (Consumer: import from CSV)
 │   ├── load_dimensions.sql (Consumer: create dimension tables)
 │   ├── load_facts.sql (Consumer: create fact tables)
 │   └── validate_import.sql (Consumer: validate data quality)
-└── export_bundle_notebook.ipynb (Databricks notebook version)
+└── export_bundle_notebook.ipynb ⚠️ DEPRECATED - use export_bundle.py
 ```
 
 ## Quick Start

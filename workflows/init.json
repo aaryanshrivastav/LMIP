@@ -1,0 +1,127 @@
+{
+  "name": "LMIP_Initialization",
+  "email_notifications": {
+    "on_start": ["aaryan.shrivastav1403@gmail.com"],
+    "on_success": ["aaryan.shrivastav1403@gmail.com"],
+    "on_failure": ["aaryan.shrivastav1403@gmail.com"],
+    "no_alert_for_skipped_runs": false
+  },
+  "timeout_seconds": 3600,
+  "trigger": {
+    "pause_status": "PAUSED"
+  },
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "Init_Create_Schemas",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/init/init_create_schemas",
+        "base_parameters": {
+          "catalog": "workspace"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 300,
+      "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Init_Seed_Metadata",
+      "depends_on": [{"task_key": "Init_Create_Schemas"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/init/init_seed_metadata",
+        "base_parameters": {
+          "catalog": "workspace",
+          "schema": "metadata"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 600,
+      "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Init_Validate_Environment",
+      "depends_on": [{"task_key": "Init_Seed_Metadata"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/init/init_validate_env",
+        "base_parameters": {
+          "catalog": "workspace",
+          "strict_mode": "false"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 300,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Init_Register_Secrets",
+      "depends_on": [{"task_key": "Init_Validate_Environment"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/init/init_register_secrets",
+        "base_parameters": {
+          "validate_only": "true"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 300,
+      "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Init_Superset_Bootstrap",
+      "depends_on": [{"task_key": "Init_Register_Secrets"}],
+      "run_if": "ALL_DONE",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/init/init_superset_bootstrap",
+        "base_parameters": {
+          "catalog": "workspace",
+          "export_config": "true"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 600,
+      "max_retries": 1,
+      "email_notifications": {
+        "on_success": ["aaryan.shrivastav1403@gmail.com"]
+      },
+      "environment_key": "Default"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "catalog",
+      "default": "workspace"
+    },
+    {
+      "name": "strict_mode",
+      "default": "false"
+    },
+    {
+      "name": "skip_superset",
+      "default": "false"
+    }
+  ],
+  "format": "MULTI_TASK",
+  "queue": {
+    "enabled": true
+  },
+  "environments": [
+    {
+      "environment_key": "Default",
+      "spec": {
+        "environment_version": "5"
+      }
+    }
+  ],
+  "performance_target": "PERFORMANCE_OPTIMIZED"
+}

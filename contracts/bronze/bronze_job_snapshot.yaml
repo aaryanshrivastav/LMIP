@@ -1,115 +1,73 @@
 table_name: workspace.bronze.bronze_job_snapshot
 layer: bronze
-description: Immutable snapshots of Bronze ingestion job executions. Captures job
-  metadata for audit trail.
+description: Immutable snapshots of Bronze ingestion job executions. Captures job metadata for audit trail.
 primary_key:
-- snapshot_id
+  - snapshot_id
 business_keys:
-- job_id
-- batch_id
-- run_id
+  - job_id
+  - batch_id
+  - run_id
 columns:
-- name: snapshot_id
-  type: STRING
-  nullable: false
-  description: Unique snapshot identifier
-- name: source_name
-  type: STRING
-  nullable: false
-  description: Source system name
-- name: source_job_id
-  type: STRING
-  nullable: true
-  description: Job ID from source system
-- name: batch_id
-  type: STRING
-  nullable: false
-  description: Batch processing identifier
-- name: page_number
-  type: INT
-  nullable: true
-  description: Page number for paginated sources
-- name: page_size
-  type: INT
-  nullable: true
-  description: Page size for paginated sources
-- name: payload_json
-  type: STRING
-  nullable: false
-  description: Full JSON payload from source
-- name: payload_hash
-  type: STRING
-  nullable: false
-  description: SHA256 hash of payload for deduplication
-- name: ingestion_timestamp
-  type: TIMESTAMP
-  nullable: false
-  description: When record was ingested
-- name: ingestion_date
-  type: DATE
-  nullable: false
-  description: Ingestion date for partitioning
-- name: source_status_code
-  type: INT
-  nullable: true
-  description: HTTP status code from source
-- name: source_etag
-  type: STRING
-  nullable: true
-  description: ETag from source for caching
-- name: job_id
-  type: STRING
-  nullable: false
-  description: Job identifier
-- name: job_name
-  type: STRING
-  nullable: true
-  description: Job name
-- name: batch_id
-  type: STRING
-  nullable: false
-  description: Batch processing identifier
-- name: run_id
-  type: STRING
-  nullable: true
-  description: Job run identifier
-- name: status
-  type: STRING
-  nullable: false
-  description: 'Job status: running, success, failed, partial'
-- name: config_json
-  type: STRING
-  nullable: true
-  description: Job configuration as JSON
-- name: snapshot_timestamp
-  type: TIMESTAMP
-  nullable: false
-  description: When snapshot was taken
-- name: ingestion_timestamp
-  type: TIMESTAMP
-  nullable: false
-  description: When record was ingested
+  - name: snapshot_id
+    type: STRING
+    nullable: false
+    description: Unique snapshot identifier (UUID)
+  - name: job_id
+    type: STRING
+    nullable: false
+    description: Databricks job identifier
+  - name: job_name
+    type: STRING
+    nullable: true
+    description: Job name for human readability
+  - name: batch_id
+    type: STRING
+    nullable: false
+    description: Batch processing identifier
+  - name: run_id
+    type: STRING
+    nullable: true
+    description: Databricks job run identifier
+  - name: status
+    type: STRING
+    nullable: false
+    description: Job execution status (running, success, failed, partial)
+  - name: config_json
+    type: STRING
+    nullable: true
+    description: Job configuration as JSON string
+  - name: snapshot_timestamp
+    type: TIMESTAMP
+    nullable: false
+    description: When the snapshot was captured (UTC)
+  - name: ingestion_timestamp
+    type: TIMESTAMP
+    nullable: false
+    description: When record was ingested to table (UTC)
 partitioning:
   type: date
   columns:
-  - ingestion_timestamp
+    - ingestion_timestamp
 quality_rules:
-- rule: not_null
-  columns:
-  - snapshot_id
-  - job_id
-  - batch_id
-  - status
-- rule: valid_enum
-  column: status
-  values:
-  - running
-  - success
-  - failed
-  - partial
+  - rule: not_null
+    columns:
+      - snapshot_id
+      - job_id
+      - batch_id
+      - status
+  - rule: unique
+    columns:
+      - snapshot_id
+  - rule: valid_enum
+    column: status
+    values:
+      - running
+      - success
+      - failed
+      - partial
 lineage_inputs: []
 lineage_outputs:
-- workspace.audit.audit_pipeline_runs
-generated_date: '2026-06-07T06:04:54.893559'
+  - workspace.audit.audit_pipeline_runs
+generated_date: '2026-06-11T00:00:00'
 contract_version: '1.0'
 status: active

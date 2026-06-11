@@ -1,0 +1,109 @@
+# Contract: workspace.audit.publish_export_log
+# Description: Audit log for CSV snapshot exports tracking per-table export results
+# Owner: publish_csv_snapshot_export notebook
+# Type: Audit log
+
+table:
+  catalog: workspace
+  schema: audit
+  name: publish_export_log
+  table_format: DELTA
+  primary_key: []
+  comment: "Audit log for CSV snapshot exports. Records export status, metrics, and file details for each table exported."
+
+columns:
+  - name: table
+    type: STRING
+    nullable: true
+    comment: "Name of the table that was exported"
+    
+  - name: status
+    type: STRING
+    nullable: true
+    comment: "Export status: 'success', 'error', or 'skipped'"
+    
+  - name: row_count
+    type: BIGINT
+    nullable: true
+    comment: "Number of rows exported from the table"
+    
+  - name: file_size_mb
+    type: DOUBLE
+    nullable: true
+    comment: "Size of the generated CSV file in megabytes"
+    
+  - name: duration_sec
+    type: DOUBLE
+    nullable: true
+    comment: "Time taken to export the table in seconds"
+    
+  - name: checksum
+    type: STRING
+    nullable: true
+    comment: "MD5 checksum of the exported CSV file for integrity verification"
+    
+  - name: file
+    type: STRING
+    nullable: true
+    comment: "Relative path to the exported CSV file (e.g., 'data/dim_sector.csv.gz')"
+    
+  - name: schema
+    type: STRING
+    nullable: true
+    comment: "Source schema name (e.g., 'warehouse', 'gold', 'audit')"
+    
+  - name: sort_columns
+    type: ARRAY<STRING>
+    nullable: true
+    comment: "Columns used for deterministic sorting during export"
+    
+  - name: error
+    type: STRING
+    nullable: true
+    comment: "Error message if status is 'error'"
+    
+  - name: reason
+    type: STRING
+    nullable: true
+    comment: "Reason for skip if status is 'skipped' (e.g., 'empty')"
+
+data_quality:
+  - rule: status_values
+    level: ERROR
+    description: "Status must be 'success', 'error', or 'skipped'"
+    sql: "status IN ('success', 'error', 'skipped')"
+    
+  - rule: success_records_complete
+    level: WARNING
+    description: "Successful exports should have checksum and file path"
+    sql: "status != 'success' OR (checksum IS NOT NULL AND file IS NOT NULL)"
+    
+  - rule: non_negative_metrics
+    level: ERROR
+    description: "Counts and sizes must be non-negative"
+    sql: "row_count >= 0 AND file_size_mb >= 0 AND duration_sec >= 0"
+
+usage:
+  created_by: publish_csv_snapshot_export
+  accessed_by:
+    - publish_csv_snapshot_export
+    - audit_generate_report
+  purpose: "Track CSV export operations for monitoring, debugging, and compliance"
+  
+lineage:
+  upstream: []
+  downstream: []
+  
+notes: |
+  This audit table captures detailed metrics for each table exported during CSV snapshot generation.
+  
+  Key behaviors:
+  - One record per table per export run
+  - Append-only (no updates or deletes)
+  - Used for operational monitoring and troubleshooting
+  - File checksums enable integrity verification at consumer side
+  
+  Export workflow:
+  1. publish_csv_snapshot_export notebook exports tables to CSV files
+  2. Each export result (success/error/skip) is logged to this table
+  3. Checksums and file paths enable downstream validation

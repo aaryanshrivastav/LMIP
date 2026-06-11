@@ -6,7 +6,7 @@
 -- Purpose: Physical table definition for silver_jobs_current
 -- Dependencies: workspace.silver.silver_jobs_staging
 -- Consumers: workspace.warehouse.dim_job, workspace.warehouse.fact_job_postings
--- Expected Output: Table created with 22 columns
+-- Expected Output: Table created with 25 columns
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS workspace.silver.silver_jobs_current (
@@ -25,6 +25,9 @@ CREATE TABLE IF NOT EXISTS workspace.silver.silver_jobs_current (
   salary_max DECIMAL(15,2) COMMENT 'Maximum salary',
   salary_currency STRING COMMENT 'Salary currency code',
   employment_type_normalized STRING COMMENT 'Employment type',
+  sector_assigned STRING COMMENT 'Assigned industry sector',
+  sector_confidence DOUBLE COMMENT 'Confidence score for sector assignment',
+  sector_assignment_method STRING COMMENT 'Method used for sector assignment',
   posted_at TIMESTAMP COMMENT 'Posting timestamp',
   last_seen TIMESTAMP NOT NULL COMMENT 'Last seen timestamp',
   is_active BOOLEAN NOT NULL COMMENT 'Currently active',
@@ -36,7 +39,7 @@ CREATE TABLE IF NOT EXISTS workspace.silver.silver_jobs_current (
   PRIMARY KEY (enterprise_job_id)
 )
 COMMENT 'Current state of all job postings after CDC and deduplication. Single source of truth for job data.'
-PARTITIONED BY (updated_at)
+PARTITIONED BY (DATE(updated_at))
 USING DELTA
 TBLPROPERTIES (
   'delta.enableChangeDataFeed' = 'true',

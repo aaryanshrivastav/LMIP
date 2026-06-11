@@ -7,7 +7,6 @@
 -- DROP TABLE IF EXISTS gold_location_trends CASCADE;
 -- DROP TABLE IF EXISTS gold_skill_demand CASCADE;
 -- DROP TABLE IF EXISTS gold_salary_trends CASCADE;
--- DROP TABLE IF EXISTS gold_hospitality_companies CASCADE;
 -- DROP TABLE IF EXISTS gold_company_hiring CASCADE;
 
 -- gold_company_hiring
@@ -32,27 +31,6 @@ COMMENT ON COLUMN gold_company_hiring.active_jobs IS 'Active jobs count';
 COMMENT ON COLUMN gold_company_hiring.new_jobs IS 'New jobs posted';
 COMMENT ON COLUMN gold_company_hiring.closed_jobs IS 'Jobs closed';
 COMMENT ON COLUMN gold_company_hiring.net_change IS 'Net change in jobs';
-
--- gold_hospitality_companies
-CREATE TABLE IF NOT EXISTS gold_hospitality_companies (
-  hospitality_date_sk INTEGER NOT NULL,
-  sector_sk INTEGER NOT NULL REFERENCES dim_sector(sector_sk),
-  company_sk INTEGER NOT NULL REFERENCES dim_company(company_sk),
-  active_jobs INTEGER NOT NULL DEFAULT 0,
-  new_jobs INTEGER NOT NULL DEFAULT 0,
-  closed_jobs INTEGER NOT NULL DEFAULT 0,
-  net_change INTEGER NOT NULL DEFAULT 0,
-  PRIMARY KEY (hospitality_date_sk, sector_sk, company_sk)
-);
-
-COMMENT ON TABLE gold_hospitality_companies IS 'Hospitality sector company trends';
-COMMENT ON COLUMN gold_hospitality_companies.hospitality_date_sk IS 'Date key YYYYMMDD';
-COMMENT ON COLUMN gold_hospitality_companies.sector_sk IS 'FK to dim_sector (hospitality)';
-COMMENT ON COLUMN gold_hospitality_companies.company_sk IS 'FK to dim_company';
-COMMENT ON COLUMN gold_hospitality_companies.active_jobs IS 'Active jobs';
-COMMENT ON COLUMN gold_hospitality_companies.new_jobs IS 'New jobs posted';
-COMMENT ON COLUMN gold_hospitality_companies.closed_jobs IS 'Jobs closed';
-COMMENT ON COLUMN gold_hospitality_companies.net_change IS 'Net change';
 
 -- gold_salary_trends
 CREATE TABLE IF NOT EXISTS gold_salary_trends (
@@ -132,9 +110,6 @@ CREATE INDEX IF NOT EXISTS idx_company_hiring_date ON gold_company_hiring(hiring
 CREATE INDEX IF NOT EXISTS idx_company_hiring_company ON gold_company_hiring(company_sk);
 CREATE INDEX IF NOT EXISTS idx_company_hiring_sector ON gold_company_hiring(sector_sk);
 
-CREATE INDEX IF NOT EXISTS idx_hospitality_date ON gold_hospitality_companies(hospitality_date_sk);
-CREATE INDEX IF NOT EXISTS idx_hospitality_company ON gold_hospitality_companies(company_sk);
-
 CREATE INDEX IF NOT EXISTS idx_salary_date ON gold_salary_trends(salary_date_sk);
 CREATE INDEX IF NOT EXISTS idx_salary_sector ON gold_salary_trends(sector_sk);
 CREATE INDEX IF NOT EXISTS idx_salary_role ON gold_salary_trends(role_sk);
@@ -162,9 +137,7 @@ CREATE TABLE IF NOT EXISTS version_history (
   status VARCHAR(20) NOT NULL DEFAULT 'active',
   deprecated_at TIMESTAMPTZ,
   notes TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-COMMENT ON TABLE version_history IS 'Tracks published data bundle versions';
-CREATE INDEX IF NOT EXISTS idx_version_history_status ON version_history(status);
-CREATE INDEX IF NOT EXISTS idx_version_history_published ON version_history(published_at);
+COMMENT ON TABLE version_history IS 'Tracks data bundle versions and lineage';

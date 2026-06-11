@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Bootstrap Script: Create Schemas
 -- Purpose: Initialize all schemas required for LMIP data warehouse
--- Expected Output: 6 schemas created (bronze, silver, semantic, warehouse, gold, audit)
+-- Expected Output: 8 schemas created (bronze, silver, semantic, warehouse, gold, quarantine, publish, audit)
 -- Dependencies: workspace catalog must exist
 -- ============================================================================
 
@@ -30,6 +30,16 @@ CREATE SCHEMA IF NOT EXISTS workspace.gold
 COMMENT 'Gold layer - aggregated analytical marts and views'
 LOCATION 'dbfs:/lmip/gold';
 
+-- Create Quarantine Layer Schema
+CREATE SCHEMA IF NOT EXISTS workspace.quarantine
+COMMENT 'Quarantine layer - records that failed data quality validation'
+LOCATION 'dbfs:/lmip/quarantine';
+
+-- Create Publish Layer Schema
+CREATE SCHEMA IF NOT EXISTS workspace.publish
+COMMENT 'Publish layer - consumer-facing exports, manifests, and bundles'
+LOCATION 'dbfs:/lmip/publish';
+
 -- Create Audit Layer Schema
 CREATE SCHEMA IF NOT EXISTS workspace.audit
 COMMENT 'Audit layer - pipeline metadata, data quality results, and access logs'
@@ -42,7 +52,7 @@ SELECT
   comment
 FROM system.information_schema.schemata
 WHERE catalog_name = 'workspace'
-  AND schema_name IN ('bronze', 'silver', 'semantic', 'warehouse', 'gold', 'audit')
+  AND schema_name IN ('bronze', 'silver', 'semantic', 'warehouse', 'gold', 'quarantine', 'publish', 'audit')
 ORDER BY schema_name;
 
 -- End of bootstrap script

@@ -30,23 +30,6 @@
       "environment_key": "Default"
     },
     {
-      "task_key": "Recovery_Quarantine_Manage",
-      "run_if": "ALL_SUCCESS",
-      "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/quarantine/quarantine_manage",
-        "base_parameters": {
-          "action": "{{job.parameters.quarantine_action}}",
-          "entity_type": "{{job.parameters.entity_type}}",
-          "batch_size": "1000"
-        },
-        "source": "WORKSPACE"
-      },
-      "timeout_seconds": 3600,
-      "max_retries": 2,
-      "email_notifications": {},
-      "environment_key": "Default"
-    },
-    {
       "task_key": "Recovery_Silver_Reprocess",
       "depends_on": [{"task_key": "Recovery_Bronze_Replay_Backfill"}],
       "run_if": "ALL_SUCCESS",
@@ -114,11 +97,27 @@
       "environment_key": "Default"
     },
     {
+      "task_key": "Recovery_Quarantine_Manage",
+      "depends_on": [{"task_key": "Recovery_Warehouse_Rebuild"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/quarantine/quarantine_manage",
+        "base_parameters": {
+          "action": "{{job.parameters.quarantine_action}}",
+          "entity_type": "{{job.parameters.entity_type}}",
+          "batch_size": "1000"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 3600,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
       "task_key": "Recovery_Validation_Report",
       "depends_on": [
-        {"task_key": "Recovery_Bronze_Replay_Backfill"},
-        {"task_key": "Recovery_Quarantine_Manage"},
-        {"task_key": "Recovery_Warehouse_Rebuild"}
+        {\"task_key\": \"Recovery_Quarantine_Manage\"}
       ],
       "run_if": "ALL_DONE",
       "notebook_task": {

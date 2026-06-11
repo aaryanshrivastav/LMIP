@@ -242,7 +242,7 @@ Phase 2: Operational Monitoring
               Gold_Pipeline_Health (runs even if upstream fails)
                       ↓
 Phase 3: Industry-Specific (parallel)
-  Gold_Hospitality_Hiring | Gold_Hospitality_Skills | Gold_Hospitality_Companies
+  Gold_Company_Activity | Gold_Hiring_Activity | Gold_Skill_Demand_By_Sector
 ```
 
 **Key Operations**:
@@ -254,7 +254,7 @@ Phase 3: Industry-Specific (parallel)
 **Outputs**:
 * 6 core analytics tables
 * 1 operational table
-* 3+ industry-specific tables
+* 3 sector-aware analytics tables
 
 **Performance Optimizations**:
 * Pre-computed aggregations (avoid expensive joins at query time)

@@ -45,7 +45,6 @@ class BundleExporter:
     
     FACT_TABLES = [
         "gold_company_hiring",
-        "gold_hospitality_companies",
         "gold_location_trends",
         "gold_salary_trends",
         "gold_skill_demand"
@@ -53,7 +52,6 @@ class BundleExporter:
     
     DEPENDENCIES = {
         "gold_company_hiring": ["dim_sector", "dim_company", "dim_location"],
-        "gold_hospitality_companies": ["dim_sector", "dim_company"],
         "gold_location_trends": ["dim_sector", "dim_location"],
         "gold_salary_trends": ["dim_sector", "dim_role", "dim_location", "dim_company"],
         "gold_skill_demand": ["dim_sector", "dim_role", "dim_location", "dim_skill"]
@@ -239,7 +237,6 @@ class BundleExporter:
         """Get the date key column name for a fact table."""
         date_columns = {
             "gold_company_hiring": "hiring_date_sk",
-            "gold_hospitality_companies": "hospitality_date_sk",
             "gold_location_trends": "location_date_sk",
             "gold_salary_trends": "salary_date_sk",
             "gold_skill_demand": "demand_date_sk"
@@ -334,7 +331,6 @@ class BundleExporter:
 
 ### Fact Tables ({len([t for t in self.manifest['tables'] if t['table_type'] == 'fact'])})
 * gold_company_hiring - Company hiring activity
-* gold_hospitality_companies - Hospitality sector trends
 * gold_salary_trends - Salary trends
 * gold_skill_demand - Skill demand
 * gold_location_trends - Location trends

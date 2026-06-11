@@ -6,13 +6,14 @@
 -- Purpose: Physical table definition for dim_sector
 -- Dependencies: workspace.semantic.sem_sector_map
 -- Consumers: workspace.warehouse.dim_company, workspace.warehouse.dim_job
--- Expected Output: Table created with 6 columns
+-- Expected Output: Table created with 7 columns
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS workspace.warehouse.dim_sector (
   sector_sk BIGINT NOT NULL COMMENT 'Surrogate key',
   sector_name STRING NOT NULL COMMENT 'Sector name',
   sector_category STRING COMMENT 'Parent sector category',
+  sector_family STRING COMMENT 'Sector family grouping (e.g., HOSPITALITY, TECHNOLOGY)',
   sector_description STRING COMMENT 'Sector description',
   is_active BOOLEAN NOT NULL COMMENT 'Active flag',
   created_at TIMESTAMP NOT NULL COMMENT 'Creation timestamp'

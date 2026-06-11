@@ -1,0 +1,79 @@
+# Contract: workspace.audit.publish_manifest_log
+# Description: Audit log for manifest generation operations
+# Owner: publish_manifest_write notebook
+# Type: Audit log
+
+table:
+  catalog: workspace
+  schema: audit
+  name: publish_manifest_log
+  table_format: DELTA
+  primary_key: []
+  comment: "Audit log for manifest generation. Records manifest creation events with snapshot and table counts."
+
+columns:
+  - name: operation
+    type: STRING
+    nullable: true
+    comment: "Type of manifest operation performed (e.g., 'manifest_generation')"
+    
+  - name: master_manifest_path
+    type: STRING
+    nullable: true
+    comment: "Path to the master manifest file in UC Volumes"
+    
+  - name: snapshot_count
+    type: INT
+    nullable: true
+    comment: "Number of snapshots documented in the manifest"
+    
+  - name: table_count
+    type: INT
+    nullable: true
+    comment: "Number of tables included in the manifest"
+    
+  - name: manifest_version
+    type: STRING
+    nullable: true
+    comment: "Version of the manifest format (e.g., '1.0')"
+    
+  - name: generated_at
+    type: TIMESTAMP
+    nullable: true
+    comment: "Timestamp when the manifest was generated (ISO 8601 format)"
+
+data_quality:
+  - rule: non_negative_counts
+    level: ERROR
+    description: "Counts must be non-negative"
+    sql: "snapshot_count >= 0 AND table_count >= 0"
+    
+  - rule: generated_at_not_future
+    level: WARNING
+    description: "Generated timestamp should not be in the future"
+    sql: "generated_at <= CURRENT_TIMESTAMP()"
+
+usage:
+  created_by: publish_manifest_write
+  accessed_by:
+    - publish_manifest_write
+    - audit_generate_report
+  purpose: "Track manifest generation for monitoring and compliance"
+  
+lineage:
+  upstream: []
+  downstream: []
+  
+notes: |
+  This audit table captures manifest generation events.
+  
+  Key behaviors:
+  - One record per manifest generation run
+  - Append-only (no updates or deletes)
+  - Used for operational monitoring and troubleshooting
+  - Tracks master manifest path and counts for verification
+  
+  Manifest workflow:
+  1. publish_manifest_write notebook generates schema and compatibility manifests
+  2. Records operation details to this audit table
+  3. Manifest path and counts enable downstream validation

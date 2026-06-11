@@ -256,7 +256,9 @@
 * `gold_location_trends` - Geographic hiring trends
 * `gold_sector_overview` - Sector-level aggregations
 * `gold_pipeline_health` - Operational monitoring
-* `gold_hospitality_*` - Multi-sector analytics with sector dimension
+* `gold_company_activity` - Company hiring activity by sector
+* `gold_hiring_activity` - Sector-aware hiring trends
+* `gold_skill_demand_by_sector` - Skill demand analysis by sector
 
 **Key Metrics**:
 * Salary percentiles (P25, P50, P75, P90)
@@ -311,8 +313,8 @@
 * **Retention Policies**: Auto-expire old quarantined records
 
 **Tables**:
-* `workspace.quarantine.quarantine_records` - Isolated DQ failures
-* `workspace.quarantine.quarantine_review_decisions` - Review outcomes
+* `workspace.quarantine.quarantine_jobs` - Isolated DQ failures
+* `workspace.quarantine.quarantine_batches` - Batch-level quarantine operation tracking
 
 **Operations**:
 1. **Route Records**: Automatically quarantine DQ failures
