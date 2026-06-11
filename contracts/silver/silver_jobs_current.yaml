@@ -48,6 +48,10 @@ columns:
   type: STRING
   nullable: true
   description: Normalized location
+- name: location_raw
+  type: STRING
+  nullable: true
+  description: Raw location string
 - name: remote_type
   type: STRING
   nullable: true
@@ -96,6 +100,34 @@ columns:
   type: TIMESTAMP
   nullable: false
   description: Last update timestamp
+- name: dq_overall_status
+  type: STRING
+  nullable: true
+  description: Overall data quality status
+- name: dq_validated_at
+  type: TIMESTAMP
+  nullable: true
+  description: When DQ validation was performed
+- name: dq_validation_level
+  type: STRING
+  nullable: true
+  description: Level of DQ validation applied
+- name: sector_assigned
+  type: STRING
+  nullable: true
+  description: Assigned industry sector
+- name: sector_confidence
+  type: DOUBLE
+  nullable: true
+  description: Confidence score for sector assignment
+- name: sector_assignment_method
+  type: STRING
+  nullable: true
+  description: Method used for sector assignment
+- name: source_url
+  type: STRING
+  nullable: true
+  description: Source job posting URL
 partitioning:
   type: date
   columns:

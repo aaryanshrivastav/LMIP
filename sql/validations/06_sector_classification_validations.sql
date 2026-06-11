@@ -143,7 +143,7 @@ WHERE taxonomy_type NOT IN ('NAICS', 'SIC', 'CUSTOM', 'INDUSTRY_STANDARD')
 HAVING COUNT(*) > 0;
 
 -- RULE: SECT_008 - Sector Family Consistency in Warehouse
--- Target: workspace.warehouse.dim_sector
+-- Target: workspace.metadata.sector_dim
 -- Severity: WARNING
 -- Action: LOG_WARNING
 SELECT 
@@ -152,13 +152,13 @@ SELECT
   'WARNING' AS severity,
   COUNT(*) AS failed_records,
   CURRENT_TIMESTAMP() AS validation_timestamp,
-  'warehouse' AS target_schema,
-  'dim_sector' AS target_table,
+  'metadata' AS target_schema,
+  'sector_dim' AS target_table,
   'Sectors with invalid sector_family values' AS description
-FROM workspace.warehouse.dim_sector
+FROM workspace.metadata.sector_dim
 WHERE sector_family NOT IN (
   SELECT DISTINCT sector_family 
-  FROM workspace.warehouse.dim_sector
+  FROM workspace.metadata.sector_dim
   WHERE active_flag = TRUE
   GROUP BY sector_family
   HAVING COUNT(*) > 1
@@ -166,7 +166,7 @@ WHERE sector_family NOT IN (
 HAVING COUNT(*) > 0;
 
 -- RULE: SECT_009 - Hospitality Sector Coverage
--- Target: workspace.gold.gold_hospitality_companies
+-- Target: workspace.gold.gold_sector_companies
 -- Severity: WARNING
 -- Action: LOG_WARNING
 SELECT 
@@ -176,17 +176,18 @@ SELECT
   COUNT(*) AS failed_records,
   CURRENT_TIMESTAMP() AS validation_timestamp,
   'gold' AS target_schema,
-  'gold_hospitality_companies' AS target_table,
-  'Companies tagged as hospitality missing sector assignment' AS description
-FROM workspace.gold.gold_hospitality_companies ghc
-WHERE NOT EXISTS (
-  SELECT 1 
-  FROM workspace.warehouse.dim_company dc
-  JOIN workspace.warehouse.fact_job_postings fjp ON dc.company_sk = fjp.company_sk
-  JOIN workspace.warehouse.dim_sector ds ON fjp.sector_sk = ds.sector_sk
-  WHERE dc.company_name = ghc.company_name
-    AND ds.sector_family = 'HOSPITALITY'
-)
+  'gold_sector_companies' AS target_table,
+  'Companies in hospitality sector missing proper classification' AS description
+FROM workspace.gold.gold_sector_companies gsc
+WHERE gsc.sector_name = 'Hospitality'
+  AND NOT EXISTS (
+    SELECT 1 
+    FROM workspace.warehouse.dim_company dc
+    JOIN workspace.warehouse.fact_job_postings fjp ON dc.company_sk = fjp.company_sk
+    JOIN workspace.metadata.sector_dim sd ON dc.sector_sk = sd.sector_sk
+    WHERE dc.company_name = gsc.company_name
+      AND sd.sector_family = 'HOSPITALITY'
+  )
 HAVING COUNT(*) > 0;
 
 -- =====================================================

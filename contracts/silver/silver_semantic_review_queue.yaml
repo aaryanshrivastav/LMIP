@@ -1,0 +1,81 @@
+table_name: workspace.silver.silver_semantic_review_queue
+layer: silver
+description: Queue for semantic review of job postings with data quality or classification issues
+primary_key:
+  - review_id
+business_keys:
+  - enterprise_job_id
+  - batch_id
+columns:
+  - name: review_id
+    type: STRING
+    nullable: false
+    description: Unique review item identifier
+  - name: enterprise_job_id
+    type: STRING
+    nullable: false
+    description: FK to silver_jobs_current
+  - name: issue_type
+    type: STRING
+    nullable: false
+    description: Type of issue (SECTOR_AMBIGUOUS, TITLE_UNCLEAR, etc.)
+  - name: issue_detail
+    type: STRING
+    nullable: true
+    description: Detailed description of the issue
+  - name: confidence
+    type: DOUBLE
+    nullable: true
+    description: Confidence score that this is an issue (0.0-1.0)
+  - name: queued_at
+    type: TIMESTAMP
+    nullable: false
+    description: When item was queued for review
+  - name: status
+    type: STRING
+    nullable: false
+    description: Review status (PENDING, IN_REVIEW, RESOLVED, DISMISSED)
+  - name: resolved_at
+    type: TIMESTAMP
+    nullable: true
+    description: When review was completed
+  - name: resolution_notes
+    type: STRING
+    nullable: true
+    description: Notes from review resolution
+  - name: batch_id
+    type: STRING
+    nullable: false
+    description: Batch that identified the issue
+  - name: source_name
+    type: STRING
+    nullable: false
+    description: Source system identifier
+partitioning:
+  type: date
+  columns:
+    - queued_at
+quality_rules:
+  - rule: not_null
+    columns:
+      - review_id
+      - enterprise_job_id
+      - issue_type
+      - status
+  - rule: valid_enum
+    column: status
+    values:
+      - PENDING
+      - IN_REVIEW
+      - RESOLVED
+      - DISMISSED
+  - rule: referential_integrity
+    column: enterprise_job_id
+    reference_table: workspace.silver.silver_jobs_current
+lineage_inputs:
+  - workspace.silver.silver_jobs_current
+lineage_outputs:
+  - workspace.audit.audit_dq_results
+generated_date: '2026-06-11'
+contract_version: '1.0'
+status: active

@@ -13,6 +13,50 @@ columns:
   type: STRING
   nullable: false
   description: Unique snapshot identifier
+- name: source_name
+  type: STRING
+  nullable: false
+  description: Source system name
+- name: source_job_id
+  type: STRING
+  nullable: true
+  description: Job ID from source system
+- name: batch_id
+  type: STRING
+  nullable: false
+  description: Batch processing identifier
+- name: page_number
+  type: INT
+  nullable: true
+  description: Page number for paginated sources
+- name: page_size
+  type: INT
+  nullable: true
+  description: Page size for paginated sources
+- name: payload_json
+  type: STRING
+  nullable: false
+  description: Full JSON payload from source
+- name: payload_hash
+  type: STRING
+  nullable: false
+  description: SHA256 hash of payload for deduplication
+- name: ingestion_timestamp
+  type: TIMESTAMP
+  nullable: false
+  description: When record was ingested
+- name: ingestion_date
+  type: DATE
+  nullable: false
+  description: Ingestion date for partitioning
+- name: source_status_code
+  type: INT
+  nullable: true
+  description: HTTP status code from source
+- name: source_etag
+  type: STRING
+  nullable: true
+  description: ETag from source for caching
 - name: job_id
   type: STRING
   nullable: false

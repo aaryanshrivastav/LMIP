@@ -18,6 +18,10 @@ columns:
   type: STRING
   nullable: true
   description: Parent sector category
+- name: sector_family
+  type: STRING
+  nullable: true
+  description: Parent sector family grouping (e.g., HOSPITALITY, TECHNOLOGY)
 - name: sector_description
   type: STRING
   nullable: true

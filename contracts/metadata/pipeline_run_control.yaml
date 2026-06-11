@@ -1,0 +1,81 @@
+table_name: workspace.metadata.pipeline_run_control
+layer: metadata
+description: Pipeline execution control and orchestration metadata
+primary_key:
+  - run_control_sk
+business_keys:
+  - batch_id
+  - pipeline_name
+columns:
+  - name: run_control_sk
+    type: BIGINT
+    nullable: false
+    description: Surrogate key
+  - name: pipeline_name
+    type: STRING
+    nullable: false
+    description: Name of the pipeline
+  - name: batch_id
+    type: STRING
+    nullable: false
+    description: Unique batch identifier
+  - name: source_name
+    type: STRING
+    nullable: true
+    description: Source being processed
+  - name: trigger_type
+    type: STRING
+    nullable: false
+    description: Trigger type (SCHEDULED, MANUAL, EVENT)
+  - name: scheduled_at
+    type: TIMESTAMP
+    nullable: true
+    description: Scheduled execution time
+  - name: started_at
+    type: TIMESTAMP
+    nullable: true
+    description: Actual start time
+  - name: ended_at
+    type: TIMESTAMP
+    nullable: true
+    description: Completion time
+  - name: status
+    type: STRING
+    nullable: false
+    description: Execution status (PENDING, RUNNING, SUCCESS, FAILED)
+  - name: operator_user
+    type: STRING
+    nullable: true
+    description: User who triggered manual runs
+partitioning: null
+quality_rules:
+  - rule: not_null
+    columns:
+      - run_control_sk
+      - pipeline_name
+      - batch_id
+      - trigger_type
+      - status
+  - rule: unique
+    columns:
+      - run_control_sk
+      - batch_id
+  - rule: valid_enum
+    column: trigger_type
+    values:
+      - SCHEDULED
+      - MANUAL
+      - EVENT
+  - rule: valid_enum
+    column: status
+    values:
+      - PENDING
+      - RUNNING
+      - SUCCESS
+      - FAILED
+lineage_inputs: []
+lineage_outputs:
+  - workspace.audit.audit_pipeline_runs
+generated_date: '2026-06-11'
+contract_version: '1.0'
+status: active

@@ -1,0 +1,70 @@
+table_name: workspace.publish.publish_manifest
+layer: publish
+description: Manifest tracking for published data bundles
+primary_key:
+  - manifest_id
+business_keys:
+  - bundle_name
+  - contract_version
+  - snapshot_timestamp
+columns:
+  - name: manifest_id
+    type: STRING
+    nullable: false
+    description: Unique manifest identifier
+  - name: bundle_name
+    type: STRING
+    nullable: false
+    description: Name of data bundle
+  - name: contract_version
+    type: STRING
+    nullable: false
+    description: Data contract version
+  - name: snapshot_timestamp
+    type: TIMESTAMP
+    nullable: false
+    description: Data snapshot timestamp
+  - name: checksum_json
+    type: STRING
+    nullable: true
+    description: Checksums for all files in bundle (JSON)
+  - name: rowcount_json
+    type: STRING
+    nullable: true
+    description: Row counts for all tables (JSON)
+  - name: access_mode
+    type: STRING
+    nullable: false
+    description: Access mode (PUBLIC, RESTRICTED, PRIVATE)
+  - name: created_at
+    type: TIMESTAMP
+    nullable: false
+    description: When manifest was created
+partitioning:
+  type: date
+  columns:
+    - created_at
+quality_rules:
+  - rule: not_null
+    columns:
+      - manifest_id
+      - bundle_name
+      - contract_version
+      - snapshot_timestamp
+      - access_mode
+  - rule: unique
+    columns:
+      - manifest_id
+  - rule: valid_enum
+    column: access_mode
+    values:
+      - PUBLIC
+      - RESTRICTED
+      - PRIVATE
+lineage_inputs:
+  - workspace.gold.gold_job_market_summary
+  - workspace.gold.gold_sector_trends
+lineage_outputs: []
+generated_date: '2026-06-11'
+contract_version: '1.0'
+status: active

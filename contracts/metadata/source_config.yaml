@@ -1,0 +1,63 @@
+table_name: workspace.metadata.source_config
+layer: metadata
+description: Configuration registry for external data sources
+primary_key:
+  - source_config_sk
+business_keys:
+  - source_name
+columns:
+  - name: source_config_sk
+    type: BIGINT
+    nullable: false
+    description: Surrogate key
+  - name: source_name
+    type: STRING
+    nullable: false
+    description: Unique source identifier
+  - name: source_type
+    type: STRING
+    nullable: false
+    description: API type (REST, GraphQL, etc.)
+  - name: endpoint_url
+    type: STRING
+    nullable: false
+    description: Base API endpoint URL
+  - name: auth_ref
+    type: STRING
+    nullable: true
+    description: Reference to authentication credentials
+  - name: active_flag
+    type: BOOLEAN
+    nullable: false
+    description: Is this source currently active
+  - name: page_size
+    type: INT
+    nullable: true
+    description: Default page size for pagination
+  - name: rate_limit_policy
+    type: STRING
+    nullable: true
+    description: Rate limiting configuration (JSON)
+  - name: notes
+    type: STRING
+    nullable: true
+    description: Additional notes about the source
+partitioning: null
+quality_rules:
+  - rule: not_null
+    columns:
+      - source_config_sk
+      - source_name
+      - source_type
+      - endpoint_url
+      - active_flag
+  - rule: unique
+    columns:
+      - source_config_sk
+      - source_name
+lineage_inputs: []
+lineage_outputs:
+  - workspace.warehouse.dim_source
+generated_date: '2026-06-11'
+contract_version: '1.0'
+status: active

@@ -1,0 +1,63 @@
+table_name: workspace.publish.publish_bundle_log
+layer: publish
+description: Log of bundle delivery attempts to external systems
+primary_key:
+  - bundle_log_id
+business_keys:
+  - manifest_id
+  - target_system
+columns:
+  - name: bundle_log_id
+    type: STRING
+    nullable: false
+    description: Unique log entry identifier
+  - name: manifest_id
+    type: STRING
+    nullable: false
+    description: FK to publish_manifest
+  - name: target_system
+    type: STRING
+    nullable: false
+    description: Destination system identifier
+  - name: target_location
+    type: STRING
+    nullable: true
+    description: Destination path or endpoint
+  - name: status
+    type: STRING
+    nullable: false
+    description: Delivery status (PENDING, IN_PROGRESS, DELIVERED, FAILED)
+  - name: created_at
+    type: TIMESTAMP
+    nullable: false
+    description: When delivery was initiated
+partitioning:
+  type: date
+  columns:
+    - created_at
+quality_rules:
+  - rule: not_null
+    columns:
+      - bundle_log_id
+      - manifest_id
+      - target_system
+      - status
+  - rule: unique
+    columns:
+      - bundle_log_id
+  - rule: valid_enum
+    column: status
+    values:
+      - PENDING
+      - IN_PROGRESS
+      - DELIVERED
+      - FAILED
+  - rule: referential_integrity
+    column: manifest_id
+    reference_table: workspace.publish.publish_manifest
+lineage_inputs:
+  - workspace.publish.publish_manifest
+lineage_outputs: []
+generated_date: '2026-06-11'
+contract_version: '1.0'
+status: active
