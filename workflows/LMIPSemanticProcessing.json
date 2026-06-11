@@ -90,18 +90,23 @@
       "environment_key": "Default"
     },
     {
-      "task_key": "Semantic_Review_Resolver",
+      "task_key": "Log_Pipeline_Audit",
       "depends_on": [{"task_key": "Semantic_Skill_Graph_Build"}],
-      "run_if": "ALL_DONE",
+      "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/semantic/semantic_review_resolver",
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
         "base_parameters": {
-          "auto_approve_high_confidence": "true",
-          "confidence_threshold": "0.90"
+          "pipeline_name": "semantic_processing",
+          "job_id": "{{job.id}}",
+          "run_id": "{{run.id}}",
+          "status": "success",
+          "start_time": "{{run.start_time}}",
+          "catalog": "workspace",
+          "schema": "audit"
         },
         "source": "WORKSPACE"
       },
-      "timeout_seconds": 1800,
+      "timeout_seconds": 300,
       "max_retries": 1,
       "email_notifications": {},
       "environment_key": "Default"

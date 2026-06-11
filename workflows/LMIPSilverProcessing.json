@@ -127,6 +127,30 @@
       "max_retries": 2,
       "email_notifications": {},
       "environment_key": "Default"
+    },
+    {
+      "task_key": "Log_Pipeline_Audit",
+      "depends_on": [{"task_key": "Silver_Job_Identity_Map"}],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
+        "base_parameters": {
+          "pipeline_name": "silver_processing",
+          "job_id": "{{job.id}}",
+          "run_id": "{{run.id}}",
+          "status": "success",
+          "start_time": "{{run.start_time}}",
+          "rows_read": "{{tasks.Silver_Standardize_Jobs.values.records_processed}}",
+          "rows_written": "{{tasks.Silver_Job_Identity_Map.values.records_processed}}",
+          "catalog": "workspace",
+          "schema": "audit"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 300,
+      "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
     }
   ],
   "format": "MULTI_TASK",

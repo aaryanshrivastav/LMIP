@@ -1,0 +1,111 @@
+{
+  "name": "LMIPSemanticProcessing",
+  "email_notifications": {
+    "no_alert_for_skipped_runs": false
+  },
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "Company_Canonicalize",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/semantic/semantic_company_canonicalize",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Role_Map",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/semantic/semantic_role_map",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Sector_Normalise",
+      "depends_on": [
+        {
+          "task_key": "Company_Canonicalize"
+        },
+        {
+          "task_key": "Role_Map"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/semantic/semantic_sector_normalize",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Skill_Catalog_Sync",
+      "depends_on": [
+        {
+          "task_key": "Sector_Normalise"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/semantic/semantic_skill_catalog_sync",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Skill_Graph_Build",
+      "depends_on": [
+        {
+          "task_key": "Skill_Catalog_Sync"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/semantic/semantic_skill_graph_build",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Logger",
+      "depends_on": [
+        {
+          "task_key": "Skill_Graph_Build"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {}
+    }
+  ],
+  "format": "MULTI_TASK",
+  "queue": {
+    "enabled": true
+  },
+  "environments": [
+    {
+      "environment_key": "Default",
+      "spec": {
+        "environment_version": "5"
+      }
+    }
+  ],
+  "performance_target": "PERFORMANCE_OPTIMIZED"
+}

@@ -1,0 +1,148 @@
+{
+  "name": "LMIPSilverProcessing",
+  "email_notifications": {
+    "no_alert_for_skipped_runs": false
+  },
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "Standardize_Jobs",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_standardize_jobs",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Detection_CDC",
+      "depends_on": [
+        {
+          "task_key": "Standardize_Jobs"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_detect_cdc",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Apply_Soft_Delete",
+      "depends_on": [
+        {
+          "task_key": "Detection_CDC"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_apply_soft_delete_restore",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "DQ_Validate",
+      "depends_on": [
+        {
+          "task_key": "Apply_Soft_Delete"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_dq_validate",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Sector_Assign",
+      "depends_on": [
+        {
+          "task_key": "DQ_Validate"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_sector_assign",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Skill_Extract",
+      "depends_on": [
+        {
+          "task_key": "DQ_Validate"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_skill_extract",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Identity_Map",
+      "depends_on": [
+        {
+          "task_key": "Sector_Assign"
+        },
+        {
+          "task_key": "Skill_Extract"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_job_identity_map",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Logger",
+      "depends_on": [
+        {
+          "task_key": "Identity_Map"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {}
+    }
+  ],
+  "format": "MULTI_TASK",
+  "queue": {
+    "enabled": true
+  },
+  "environments": [
+    {
+      "environment_key": "Default",
+      "spec": {
+        "environment_version": "5"
+      }
+    }
+  ],
+  "performance_target": "PERFORMANCE_OPTIMIZED"
+}

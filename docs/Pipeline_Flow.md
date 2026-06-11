@@ -205,7 +205,7 @@ Phase 5: Fact Tables (parallel)
 4. **Bridge Table**: Many-to-many job ↔ skill relationships
 
 **Outputs**:
-* 10 dimension tables
+* 9 dimension tables
 * 4 fact tables
 * 1 bridge table
 

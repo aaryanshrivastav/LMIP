@@ -117,7 +117,7 @@
     {
       "task_key": "Recovery_Validation_Report",
       "depends_on": [
-        {\"task_key\": \"Recovery_Quarantine_Manage\"}
+        {"task_key": "Recovery_Quarantine_Manage"}
       ],
       "run_if": "ALL_DONE",
       "notebook_task": {

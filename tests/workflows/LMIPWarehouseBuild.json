@@ -1,0 +1,255 @@
+{
+  "name": "LMIPWarehouseBuild",
+  "email_notifications": {
+    "no_alert_for_skipped_runs": false
+  },
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "Dim_Date",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_date",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Dim_Location",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_location",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Dim_Role",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_role",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Dim_Sector",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_sector",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Dim_Company",
+      "depends_on": [
+        {
+          "task_key": "Dim_Sector"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_company",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Dim_Company_Aliases",
+      "depends_on": [
+        {
+          "task_key": "Dim_Company"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_company_alias",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Dim_Job_SCD2",
+      "depends_on": [
+        {
+          "task_key": "Dim_Company_Aliases"
+        },
+        {
+          "task_key": "Dim_Location"
+        },
+        {
+          "task_key": "Dim_Role"
+        },
+        {
+          "task_key": "Dim_Source"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_job_scd2",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Dim_Skill",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_skill",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Bridge_Job_Skill",
+      "depends_on": [
+        {
+          "task_key": "Dim_Job_SCD2"
+        },
+        {
+          "task_key": "Dim_Skill"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_bridge_job_skill",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Dim_Source",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_source",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Fact_Job_Postings",
+      "depends_on": [
+        {
+          "task_key": "Dim_Job_SCD2"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_fact_job_postings",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Fact_Pipeline_Runs",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_fact_pipeline_runs",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Aggregate_Monthly_Postings",
+      "depends_on": [
+        {
+          "task_key": "Fact_Job_Postings"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_agg_monthly_postings",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Aggregate_Skill_Demand",
+      "depends_on": [
+        {
+          "task_key": "Bridge_Job_Skill"
+        },
+        {
+          "task_key": "Fact_Job_Postings"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_agg_skill_demand",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Log_Warehouse_Execution",
+      "depends_on": [
+        {
+          "task_key": "Aggregate_Monthly_Postings"
+        },
+        {
+          "task_key": "Aggregate_Skill_Demand"
+        },
+        {
+          "task_key": "Fact_Pipeline_Runs"
+        }
+      ],
+      "run_if": "ALL_DONE",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/audit_notebook",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "pipeline_name": "LMIP_Warehouse_Build",
+          "layer": "warehouse",
+          "environment": "production"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
+    }
+  ],
+  "format": "MULTI_TASK",
+  "queue": {
+    "enabled": true
+  },
+  "environments": [
+    {
+      "environment_key": "Default",
+      "spec": {
+        "environment_version": "5"
+      }
+    }
+  ],
+  "performance_target": "PERFORMANCE_OPTIMIZED"
+}

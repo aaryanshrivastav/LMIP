@@ -1,44 +1,35 @@
 {
-  "name": "LMIP_Gold_Build",
+  "name": "LMIPGoldBuild",
   "email_notifications": {
-    "on_failure": [
-      "aaryan.shrivastav1403@gmail.com"
-    ],
     "no_alert_for_skipped_runs": false
   },
-  "timeout_seconds": 14400,
-  "trigger": {
-    "pause_status": "UNPAUSED",
-    "file_arrival": {
-      "url": "dbfs:/databricks/workflows/triggers/warehouse_build_complete",
-      "min_time_between_triggers_seconds": 3600
-    }
-  },
+  "timeout_seconds": 0,
   "max_concurrent_runs": 1,
   "tasks": [
     {
-      "task_key": "Gold_Salary_Trends",
+      "task_key": "Gold_Company_Hiring",
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_salary_trends",
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_company_hiring",
         "source": "WORKSPACE"
       },
-      "timeout_seconds": 3600,
-      "max_retries": 2,
-      "min_retry_interval_millis": 120000,
+      "timeout_seconds": 0,
       "email_notifications": {},
       "environment_key": "Default"
     },
     {
-      "task_key": "Gold_Skill_Demand",
+      "task_key": "Gold_Company_Activity",
+      "depends_on": [
+        {
+          "task_key": "Gold_Company_Hiring"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_skill_demand",
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_company_activity",
         "source": "WORKSPACE"
       },
-      "timeout_seconds": 3600,
-      "max_retries": 2,
-      "min_retry_interval_millis": 120000,
+      "timeout_seconds": 0,
       "email_notifications": {},
       "environment_key": "Default"
     },
@@ -49,20 +40,7 @@
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_hiring_trends",
         "source": "WORKSPACE"
       },
-      "timeout_seconds": 2400,
-      "max_retries": 2,
-      "email_notifications": {},
-      "environment_key": "Default"
-    },
-    {
-      "task_key": "Gold_Company_Hiring",
-      "run_if": "ALL_SUCCESS",
-      "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_company_hiring",
-        "source": "WORKSPACE"
-      },
-      "timeout_seconds": 2400,
-      "max_retries": 2,
+      "timeout_seconds": 0,
       "email_notifications": {},
       "environment_key": "Default"
     },
@@ -73,8 +51,18 @@
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_location_trends",
         "source": "WORKSPACE"
       },
-      "timeout_seconds": 2400,
-      "max_retries": 2,
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Gold_Salary_Trends",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_salary_trends",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
       "email_notifications": {},
       "environment_key": "Default"
     },
@@ -85,8 +73,34 @@
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_sector_overview",
         "source": "WORKSPACE"
       },
-      "timeout_seconds": 2400,
-      "max_retries": 2,
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Gold_Hiring_Activity",
+      "depends_on": [
+        {
+          "task_key": "Gold_Sector_Overview"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_hiring_activity",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Gold_Skill_Demand",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_skill_demand",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 0,
       "email_notifications": {},
       "environment_key": "Default"
     },
@@ -103,30 +117,12 @@
           "task_key": "Gold_Hiring_Trends"
         }
       ],
-      "run_if": "ALL_DONE",
+      "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_pipeline_health",
         "source": "WORKSPACE"
       },
-      "timeout_seconds": 1200,
-      "max_retries": 1,
-      "email_notifications": {},
-      "environment_key": "Default"
-    },
-    {
-      "task_key": "Gold_Hiring_Activity",
-      "depends_on": [
-        {
-          "task_key": "Gold_Sector_Overview"
-        }
-      ],
-      "run_if": "ALL_SUCCESS",
-      "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_hiring_activity",
-        "source": "WORKSPACE"
-      },
-      "timeout_seconds": 1800,
-      "max_retries": 2,
+      "timeout_seconds": 0,
       "email_notifications": {},
       "environment_key": "Default"
     },
@@ -142,25 +138,41 @@
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_skill_demand_by_sector",
         "source": "WORKSPACE"
       },
-      "timeout_seconds": 1800,
-      "max_retries": 2,
+      "timeout_seconds": 0,
       "email_notifications": {},
       "environment_key": "Default"
     },
     {
-      "task_key": "Gold_Company_Activity",
+      "task_key": "Log_Gold_Execution",
       "depends_on": [
         {
-          "task_key": "Gold_Company_Hiring"
+          "task_key": "Gold_Pipeline_Health"
+        },
+        {
+          "task_key": "Gold_Hiring_Activity"
+        },
+        {
+          "task_key": "Gold_Skill_Demand_By_Sector"
+        },
+        {
+          "task_key": "Gold_Company_Activity"
+        },
+        {
+          "task_key": "Gold_Location_Trends"
         }
       ],
-      "run_if": "ALL_SUCCESS",
+      "run_if": "ALL_DONE",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/gold/gold_company_activity",
-        "source": "WORKSPACE"
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/audit_notebook",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "pipeline_name": "LMIP_Gold_Build",
+          "layer": "gold",
+          "environment": "production"
+        }
       },
-      "timeout_seconds": 1800,
-      "max_retries": 2,
+      "timeout_seconds": 600,
+      "max_retries": 1,
       "email_notifications": {},
       "environment_key": "Default"
     }

@@ -6,7 +6,7 @@
   "webhook_notifications": {},
   "timeout_seconds": 0,
   "trigger": {
-    "pause_status": "PAUSED",
+    "pause_status": "UNPAUSED",
     "periodic": {
       "interval": 1,
       "unit": "HOURS"

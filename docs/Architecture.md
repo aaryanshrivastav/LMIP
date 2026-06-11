@@ -69,7 +69,7 @@
 │  WAREHOUSE LAYER (Star Schema)                                  │
 │  • Kimball dimensional model                                    │
 │  • SCD Type 2 for job dimension                                 │
-│  • 10 dimensions, 4 facts, 1 bridge                             │
+│  • 9 dimensions, 4 facts, 1 bridge                             │
 │  Tables: dim_*, fact_*, bridge_*                                │
 └──────────────────────┬──────────────────────────────────────────┘
                        │ Aggregation
@@ -203,7 +203,7 @@
 * **Surrogate Keys**: Stable integer keys decoupled from business keys
 * **Time Travel Joins**: SCD2 effective date windows
 
-**Dimensions (10)**:
+**Dimensions (9)**:
 * `dim_date` (Type 1) - Calendar attributes, fiscal periods
 * `dim_source` (Type 1) - Data source systems
 * `dim_company` (Type 1) - Canonical company entities
@@ -213,7 +213,6 @@
 * `dim_skill` (Type 1) - Skills catalog
 * `dim_role` (Type 1) - Canonical job roles
 * `dim_job` (Type 2) - Job postings with history (SCD2)
-* `dim_remote_type` (Type 1) - Remote work types
 
 **Facts (4)**:
 * `fact_job_postings` - Core transactional facts (one row per job posting event)
