@@ -1,7 +1,7 @@
 # LMIP Data Publishing Contracts
 
 **Version:** 1.0.0  
-**Last Updated:** 2026-06-07  
+**Last Updated:** 2026-06-12  
 **Status:** Active
 
 ## Overview

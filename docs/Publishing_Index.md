@@ -1,6 +1,6 @@
 # LMIP Publishing Documentation Index
 
-**Last Updated:** 2026-06-07
+**Last Updated:** 2026-06-12
 
 ---
 

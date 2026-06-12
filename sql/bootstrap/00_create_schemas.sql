@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Bootstrap Script: Create Schemas
 -- Purpose: Initialize all schemas required for LMIP data warehouse
--- Expected Output: 8 schemas created (bronze, silver, semantic, warehouse, gold, quarantine, publish, audit)
+-- Expected Output: 9 schemas created (bronze, silver, semantic, warehouse, gold, quarantine, publish, audit, metadata)
 -- Dependencies: workspace catalog must exist
 -- ============================================================================
 
@@ -45,6 +45,11 @@ CREATE SCHEMA IF NOT EXISTS workspace.audit
 COMMENT 'Audit layer - pipeline metadata, data quality results, and access logs'
 LOCATION 'dbfs:/lmip/audit';
 
+-- Create Metadata Layer Schema
+CREATE SCHEMA IF NOT EXISTS workspace.metadata
+COMMENT 'Metadata layer - pipeline control, source configuration, and batch tracking'
+LOCATION 'dbfs:/lmip/metadata';
+
 -- Verify schemas were created
 SELECT 
   schema_name,
@@ -52,7 +57,7 @@ SELECT
   comment
 FROM system.information_schema.schemata
 WHERE catalog_name = 'workspace'
-  AND schema_name IN ('bronze', 'silver', 'semantic', 'warehouse', 'gold', 'quarantine', 'publish', 'audit')
+  AND schema_name IN ('bronze', 'silver', 'semantic', 'warehouse', 'gold', 'quarantine', 'publish', 'audit', 'metadata')
 ORDER BY schema_name;
 
 -- End of bootstrap script

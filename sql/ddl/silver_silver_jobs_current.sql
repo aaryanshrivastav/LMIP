@@ -6,7 +6,7 @@
 -- Purpose: Physical table definition for silver_jobs_current
 -- Dependencies: workspace.silver.silver_jobs_staging
 -- Consumers: workspace.warehouse.dim_job, workspace.warehouse.fact_job_postings
--- Expected Output: Table created with 25 columns
+-- Expected Output: Table created with 31 columns
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS workspace.silver.silver_jobs_current (
@@ -20,21 +20,26 @@ CREATE TABLE IF NOT EXISTS workspace.silver.silver_jobs_current (
   title_normalized STRING COMMENT 'Standardized title',
   description_raw STRING COMMENT 'Job description text',
   location_norm STRING COMMENT 'Normalized location',
+  location_raw STRING COMMENT 'Raw location string',
   remote_type STRING COMMENT 'Remote work type',
   salary_min DECIMAL(15,2) COMMENT 'Minimum salary',
   salary_max DECIMAL(15,2) COMMENT 'Maximum salary',
   salary_currency STRING COMMENT 'Salary currency code',
   employment_type_normalized STRING COMMENT 'Employment type',
-  sector_assigned STRING COMMENT 'Assigned industry sector',
-  sector_confidence DOUBLE COMMENT 'Confidence score for sector assignment',
-  sector_assignment_method STRING COMMENT 'Method used for sector assignment',
   posted_at TIMESTAMP COMMENT 'Posting timestamp',
   last_seen TIMESTAMP NOT NULL COMMENT 'Last seen timestamp',
   is_active BOOLEAN NOT NULL COMMENT 'Currently active',
   soft_delete_flag BOOLEAN NOT NULL COMMENT 'Soft deleted',
   record_hash STRING NOT NULL COMMENT 'Content hash',
   created_at TIMESTAMP NOT NULL COMMENT 'First seen timestamp',
-  updated_at TIMESTAMP NOT NULL COMMENT 'Last update timestamp'
+  updated_at TIMESTAMP NOT NULL COMMENT 'Last update timestamp',
+  dq_overall_status STRING COMMENT 'Overall data quality status',
+  dq_validated_at TIMESTAMP COMMENT 'When DQ validation was performed',
+  dq_validation_level STRING COMMENT 'Level of DQ validation applied',
+  sector_assigned STRING COMMENT 'Assigned industry sector',
+  sector_confidence DOUBLE COMMENT 'Confidence score for sector assignment',
+  sector_assignment_method STRING COMMENT 'Method used for sector assignment',
+  source_url STRING COMMENT 'Source job posting URL'
 ,
   PRIMARY KEY (enterprise_job_id)
 )

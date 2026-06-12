@@ -1,7 +1,7 @@
 # LMIP Architecture Documentation
 
 **Document Version**: 1.0  
-**Last Updated**: 2026-06-07  
+**Last Updated**: 2026-06-12  
 **Target Audience**: Engineering teams, architects, platform operators
 
 ---

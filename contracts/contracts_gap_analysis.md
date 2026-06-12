@@ -1,6 +1,7 @@
 # LMIP Contract Gap Analysis Report
 
 **Generated**: 2026-06-07  
+**Last Updated**: 2026-06-12 (Revised to remove deleted gold tables)  
 **Author**: LMIP Data Platform Engineering  
 **Status**: Implementation Critical
 
@@ -8,12 +9,12 @@
 
 ## Executive Summary
 
-This report documents the comprehensive analysis of the LMIP (Labor Market Intelligence Platform) repository structure, identifying all datasets referenced across notebooks and generating schema contracts for each table. A total of **44 schema contracts** have been generated across **8 architectural layers**, covering the complete data pipeline from ingestion to analytics.
+This report documents the comprehensive analysis of the LMIP (Labor Market Intelligence Platform) repository structure, identifying all datasets referenced across notebooks and generating schema contracts for each table. A total of **41 schema contracts** have been generated across **8 architectural layers**, covering the complete data pipeline from ingestion to analytics.
 
 ### Key Findings
 
-* **44 unique tables identified** across Bronze, Silver, Semantic, Warehouse, Gold, Quarantine, and Audit layers
-* **44 schema contracts generated** (100% coverage of identified tables)
+* **41 unique tables identified** across Bronze, Silver, Semantic, Warehouse, Gold, Quarantine, and Audit layers
+* **41 schema contracts generated** (100% coverage of identified tables)
 * **Contract-driven architecture** successfully mapped to medallion pattern
 * **2 critical gaps identified** requiring immediate attention
 * **15 recommended enhancements** for production readiness
@@ -42,7 +43,7 @@ LMIP Architecture:
 
 ### Contract Folder Structure (Implemented)
 
-All 44 contract files have been generated in:  
+All 41 contract files have been generated in:  
 `/LMIP/contracts/{layer}/{table_name}.yaml`
 
 **Layers**: bronze, silver, semantic, warehouse, gold, quarantine, audit
@@ -52,15 +53,15 @@ All 44 contract files have been generated in:
 ## Table Inventory Summary
 
 | Layer | Tables | Contracts Generated | Purpose |
-|-------|--------|---------------------|---------|
+|-------|--------|---------------------|------------|
 | Bronze | 3 | ✅ 3 | Immutable raw data capture |
 | Silver | 5 | ✅ 5 | Standardized, cleansed data |
 | Semantic | 6 | ✅ 6 | Business rules & canonicalization |
 | Warehouse | 14 | ✅ 14 | Kimball dimensional model |
-| Gold | 11 | ✅ 11 | Pre-aggregated analytics |
+| Gold | 8 | ✅ 8 | Pre-aggregated analytics |
 | Quarantine | 2 | ✅ 2 | Data quality isolation & review |
 | Audit | 3 | ✅ 3 | Observability & compliance |
-| **TOTAL** | **44** | **✅ 44** | **100% Coverage** |
+| **TOTAL** | **41** | **✅ 41** | **100% Coverage** |
 
 ---
 
@@ -112,7 +113,7 @@ Examples:
 5. **Audit Trail**: Comprehensive logging
 6. **CDC Pattern**: Change data capture in Silver layer
 7. **Idempotent Processing**: Hash-based change detection
-8. **Industry Extensibility**: Hospitality-specific gold tables
+8. **Industry Extensibility**: Gold tables support industry-specific analytics
 
 ---
 
@@ -120,12 +121,12 @@ Examples:
 
 | Rule Type | Tables Covered | Percentage |
 |-----------|---------------|------------|
-| NOT NULL constraints | 44 | 100% |
-| UNIQUE constraints | 19 | 43% |
-| Referential integrity (FK) | 16 | 36% |
-| Enum validation | 13 | 30% |
-| Range validation | 5 | 11% |
-| Custom business rules | 9 | 20% |
+| NOT NULL constraints | 41 | 100% |
+| UNIQUE constraints | 19 | 46% |
+| Referential integrity (FK) | 16 | 39% |
+| Enum validation | 13 | 32% |
+| Range validation | 5 | 12% |
+| Custom business rules | 9 | 22% |
 
 **Recommended Additions:**
 * Temporal integrity for SCD2 tables
@@ -173,7 +174,7 @@ Examples:
 
 ## Contract Schema Standard
 
-All 44 generated contracts follow this structure:
+All 41 generated contracts follow this structure:
 
 ```yaml
 table_name: catalog.schema.table
@@ -364,7 +365,7 @@ Multiple Sources → Bronze → Silver Identity Map → Semantic Canonical → W
 **Bridges (1):**
 1. `bridge_job_skill` - Job-to-skill many-to-many
 
-### Gold Layer (11 tables) ✅
+### Gold Layer (8 tables) ✅
 
 * **Pattern**: Pre-aggregated business metrics
 * **Contracts**: 100% coverage
@@ -379,10 +380,7 @@ Multiple Sources → Bronze → Silver Identity Map → Semantic Canonical → W
 5. `gold_sector_overview` - Sector metrics
 6. `gold_company_hiring` - Company activity
 7. `gold_pipeline_health` - Data quality monitoring
-8. `gold_hospitality_skills` - Industry-specific (Hospitality)
-9. `gold_hospitality_hiring` - Industry-specific
-10. `gold_hospitality_companies` - Industry-specific
-11. `role_review_queue` - Manual review queue
+8. `role_review_queue` - Manual review queue
 
 ### Quarantine Layer (2 tables) ✅
 
@@ -412,7 +410,7 @@ Multiple Sources → Bronze → Silver Identity Map → Semantic Canonical → W
 
 The LMIP platform demonstrates **production-grade architecture** with:
 
-✅ **Complete contract coverage** - 44/44 tables documented  
+✅ **Complete contract coverage** - 41/41 tables documented  
 ✅ **Proper layering** - Clear separation of concerns  
 ✅ **CDC implementation** - Change tracking in place  
 ✅ **Dimensional modeling** - Kimball star schema  
@@ -434,8 +432,9 @@ The LMIP platform demonstrates **production-grade architecture** with:
 ---
 
 **Generated**: 2026-06-07  
+**Last Updated**: 2026-06-12  
 **Contracts Location**: `/LMIP/contracts/`  
-**Total Contracts**: 44  
+**Total Contracts**: 41  
 **Status**: Complete ✅
 
 ---
@@ -478,7 +477,7 @@ The LMIP platform demonstrates **production-grade architecture** with:
 * fact_pipeline_runs.yaml
 * bridge_job_skill.yaml
 
-### Gold (11 files)
+### Gold (8 files)
 * gold_hiring_trends.yaml
 * gold_location_trends.yaml
 * gold_skill_demand.yaml
@@ -486,9 +485,6 @@ The LMIP platform demonstrates **production-grade architecture** with:
 * gold_sector_overview.yaml
 * gold_company_hiring.yaml
 * gold_pipeline_health.yaml
-* gold_hospitality_skills.yaml
-* gold_hospitality_hiring.yaml
-* gold_hospitality_companies.yaml
 * role_review_queue.yaml
 
 ### Quarantine (2 files)

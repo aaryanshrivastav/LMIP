@@ -185,7 +185,7 @@
       ],
       "run_if": "ALL_DONE",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/audit_notebook",
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_runs",
         "source": "WORKSPACE",
         "base_parameters": {
           "pipeline_name": "LMIP_Gold_Build",

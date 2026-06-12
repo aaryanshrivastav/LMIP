@@ -1,7 +1,7 @@
 # LMIP Data Quality Framework
 
 **Version:** 1.0  
-**Last Updated:** June 7, 2026  
+**Last Updated:** June 12, 2026  
 **Owner:** Data Quality Lead  
 **Status:** Active
 

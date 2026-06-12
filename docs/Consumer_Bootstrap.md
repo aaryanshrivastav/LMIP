@@ -1,7 +1,7 @@
 # LMIP Consumer Bootstrap Guide
 
 **Document Version**: 1.0  
-**Last Updated**: 2026-06-07  
+**Last Updated**: 2026-06-12  
 **Target Audience**: Data analysts, BI developers, external consumers
 
 ---
