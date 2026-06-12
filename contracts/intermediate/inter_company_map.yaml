@@ -1,0 +1,40 @@
+table_name: workspace.intermediate.inter_company_map
+layer: intermediate
+description: Company to sector mapping and company enrichment data
+primary_key:
+- canonical_company_name
+business_keys:
+- canonical_company_name
+columns:
+- name: canonical_company_name
+  type: STRING
+  nullable: false
+  description: Canonical company name
+- name: sector_name
+  type: STRING
+  nullable: true
+  description: Assigned sector
+- name: sector_assignment_method
+  type: STRING
+  nullable: true
+  description: How sector was assigned
+- name: sector_confidence
+  type: DECIMAL(5,4)
+  nullable: true
+  description: Sector assignment confidence
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last update timestamp
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - canonical_company_name
+lineage_inputs:
+- workspace.intermediate.inter_company_canonical
+lineage_outputs:
+- workspace.gold.dim_company
+generated_date: '2026-06-07T06:07:45.563230'
+contract_version: '1.0'
+status: active

@@ -1,0 +1,50 @@
+table_name: workspace.intermediate.inter_company_canonical
+layer: intermediate
+description: Canonical company name mapping. Links company name variations to canonical
+  names.
+primary_key:
+- company_name_norm
+business_keys:
+- canonical_company_name
+columns:
+- name: company_name_norm
+  type: STRING
+  nullable: false
+  description: Normalized company name variant
+- name: canonical_company_name
+  type: STRING
+  nullable: false
+  description: Canonical company name
+- name: company_match_method
+  type: STRING
+  nullable: false
+  description: Matching algorithm used
+- name: company_match_confidence
+  type: DECIMAL(5,4)
+  nullable: false
+  description: Match confidence score
+- name: active_flag
+  type: BOOLEAN
+  nullable: false
+  description: Active company flag
+- name: assigned_at
+  type: TIMESTAMP
+  nullable: false
+  description: When mapping was created
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - company_name_norm
+  - canonical_company_name
+- rule: valid_range
+  column: company_match_confidence
+  min: 0
+  max: 1
+lineage_inputs:
+- workspace.silver.silver_jobs_current
+lineage_outputs:
+- workspace.gold.dim_company
+generated_date: '2026-06-07T06:07:45.511548'
+contract_version: '1.0'
+status: active

@@ -1,0 +1,53 @@
+table_name: workspace.gold.dim_source
+layer: gold
+description: Data source dimension tracking job posting sources
+primary_key:
+- source_sk
+business_keys:
+- source_name
+columns:
+- name: source_sk
+  type: BIGINT
+  nullable: false
+  description: Surrogate key
+- name: source_name
+  type: STRING
+  nullable: false
+  description: Source system name
+- name: source_type
+  type: STRING
+  nullable: true
+  description: API, SCRAPER, FEED
+- name: source_url
+  type: STRING
+  nullable: true
+  description: Source base URL
+- name: source_description
+  type: STRING
+  nullable: true
+  description: Source description
+- name: is_active
+  type: BOOLEAN
+  nullable: false
+  description: Active source flag
+- name: created_at
+  type: TIMESTAMP
+  nullable: false
+  description: Creation timestamp
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - source_sk
+  - source_name
+- rule: unique
+  columns:
+  - source_sk
+  - source_name
+lineage_inputs:
+- workspace.silver.silver_jobs_current
+lineage_outputs:
+- workspace.gold.fact_job_postings
+generated_date: '2026-06-07T06:14:52.690551'
+contract_version: '1.0'
+status: active

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This directory contains **governed taxonomies** for sectors, roles, and skills. These files replace hardcoded dictionaries in semantic notebooks and enable the platform to be **sector-agnostic** from day one.
+This directory contains **governed taxonomies** for sectors, roles, and skills. These files replace hardcoded dictionaries in intermediate notebooks and enable the platform to be **sector-agnostic** from day one.
 
 ## Architecture
 
@@ -30,7 +30,7 @@ Defines the sector hierarchy and keywords for classification.
 * `naics_code`: NAICS code mapping
 * `keywords`: Pipe-delimited keywords for sector matching
 
-**Usage**: Load in `semantic_sector_normalize` to replace hardcoded NAICS samples.
+**Usage**: Load in `inter_sector_normalize` to replace hardcoded NAICS samples.
 
 ### role_families.csv
 Defines role families within each sector.
@@ -54,7 +54,7 @@ Defines canonical role names and their aliases.
 * `seniority`: Seniority level (`junior`, `mid`, `senior`, `executive`)
 * `aliases`: Pipe-delimited role aliases for matching
 
-**Usage**: Load in `semantic_role_map` to replace hardcoded role dictionary.
+**Usage**: Load in `inter_role_map` to replace hardcoded role dictionary.
 
 ### canonical_skills.csv
 Defines canonical skill names and their aliases.
@@ -66,7 +66,7 @@ Defines canonical skill names and their aliases.
 * `sector_key`: Primary sector (null for cross-sector soft skills)
 * `aliases`: Pipe-delimited skill aliases for matching
 
-**Usage**: Load in `semantic_skill_catalog_sync` to replace hardcoded skill lists.
+**Usage**: Load in `inter_skill_catalog_sync` to replace hardcoded skill lists.
 
 ## Current State
 
@@ -138,14 +138,14 @@ HOSP_OPERA,Opera PMS,Technical,HOSP,"opera|opera pms|property management"
 
 ## Next Steps
 
-### Before Writing More Semantic Code
+### Before Writing More Intermediate Code
 
 1. ✅ Create metadata files (sectors, roles, skills)
 2. ✅ Create metadata loader notebook
-3. ⬜ Refactor `semantic_sector_normalize` to load from `sectors.csv`
-4. ⬜ Refactor `semantic_role_map` to load from `canonical_roles.csv`
-5. ⬜ Refactor `semantic_skill_catalog_sync` to load from `canonical_skills.csv`
-6. ⬜ Update dim tables in warehouse layer to reflect sector taxonomy
+3. ⬜ Refactor `inter_sector_normalize` to load from `sectors.csv`
+4. ⬜ Refactor `inter_role_map` to load from `canonical_roles.csv`
+5. ⬜ Refactor `inter_skill_catalog_sync` to load from `canonical_skills.csv`
+6. ⬜ Update dim tables in gold layer to reflect sector taxonomy
 7. ⬜ Design Knowledge Graph ontology using this taxonomy
 
 ### Data Source Strategy
@@ -155,13 +155,13 @@ Your current sources (Remotive, ArbeitNow) are tech-heavy. That's fine.
 **Do NOT**:
 * Redesign the platform around tech
 * Remove non-tech sectors from metadata
-* Build tech-specific semantic logic
+* Build tech-specific intermediate logic
 
 **DO**:
 * Keep the sector-agnostic metadata
 * Let Technology be the first fully populated sector
 * Plan for future data sources (Indeed, LinkedIn, sector-specific boards)
-* Ensure all semantic logic works for any sector when data arrives
+* Ensure all intermediate logic works for any sector when data arrives
 
 ## Benefits
 
@@ -173,7 +173,7 @@ Your current sources (Remotive, ArbeitNow) are tech-heavy. That's fine.
 
 ## See Also
 
-* [metadata_loader notebook](../notebooks/semantic/metadata_loader.ipynb) - Reference implementation
-* [semantic_sector_normalize](../notebooks/semantic/semantic_sector_normalize.ipynb) - Needs refactor
-* [semantic_role_map](../notebooks/semantic/semantic_role_map.ipynb) - Needs refactor
-* [semantic_skill_catalog_sync](../notebooks/semantic/semantic_skill_catalog_sync.ipynb) - Needs refactor
+* [metadata_loader notebook](../notebooks/intermediate/metadata_loader.ipynb) - Reference implementation
+* [inter_sector_normalize](../notebooks/intermediate/inter_sector_normalize.ipynb) - Needs refactor
+* [inter_role_map](../notebooks/intermediate/inter_role_map.ipynb) - Needs refactor
+* [inter_skill_catalog_sync](../notebooks/intermediate/inter_skill_catalog_sync.ipynb) - Needs refactor

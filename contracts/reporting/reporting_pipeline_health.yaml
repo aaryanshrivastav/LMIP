@@ -1,0 +1,59 @@
+table_name: workspace.reporting.reporting_pipeline_health
+layer: reporting
+description: Data pipeline health metrics and monitoring dashboard data
+primary_key:
+- health_date_sk
+- pipeline_name
+business_keys:
+- health_date_sk
+- pipeline_name
+columns:
+- name: health_date_sk
+  type: INT
+  nullable: false
+  description: Date key
+- name: pipeline_name
+  type: STRING
+  nullable: false
+  description: Pipeline identifier
+- name: total_runs
+  type: BIGINT
+  nullable: true
+  description: Total pipeline runs
+- name: successful_runs
+  type: BIGINT
+  nullable: true
+  description: Successful runs
+- name: failed_runs
+  type: BIGINT
+  nullable: true
+  description: Failed runs
+- name: avg_duration_seconds
+  type: DECIMAL(10,2)
+  nullable: true
+  description: Average run duration
+- name: total_records_processed
+  type: BIGINT
+  nullable: true
+  description: Total records processed
+- name: success_rate
+  type: DECIMAL(5,4)
+  nullable: true
+  description: Success rate %
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last refresh
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - health_date_sk
+  - pipeline_name
+lineage_inputs:
+- workspace.gold.fact_pipeline_runs
+- workspace.gold.fact_job_lifecycle
+lineage_outputs: []
+generated_date: '2026-06-07T06:20:14.895061'
+contract_version: '1.0'
+status: active

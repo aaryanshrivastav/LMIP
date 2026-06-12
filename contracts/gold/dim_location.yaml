@@ -1,0 +1,69 @@
+table_name: workspace.gold.dim_location
+layer: gold
+description: Location dimension with geographic hierarchy
+primary_key:
+- location_sk
+business_keys:
+- location_name
+columns:
+- name: location_sk
+  type: BIGINT
+  nullable: false
+  description: Surrogate key
+- name: location_name
+  type: STRING
+  nullable: false
+  description: Full location string
+- name: city
+  type: STRING
+  nullable: true
+  description: City name
+- name: state_province
+  type: STRING
+  nullable: true
+  description: State or province
+- name: country
+  type: STRING
+  nullable: true
+  description: Country name
+- name: country_code
+  type: STRING
+  nullable: true
+  description: ISO country code
+- name: region
+  type: STRING
+  nullable: true
+  description: Geographic region
+- name: latitude
+  type: DECIMAL(10,7)
+  nullable: true
+  description: Latitude coordinate
+- name: longitude
+  type: DECIMAL(10,7)
+  nullable: true
+  description: Longitude coordinate
+- name: is_remote
+  type: BOOLEAN
+  nullable: false
+  description: Remote location flag
+- name: created_at
+  type: TIMESTAMP
+  nullable: false
+  description: Creation timestamp
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - location_sk
+  - location_name
+- rule: unique
+  columns:
+  - location_sk
+lineage_inputs:
+- workspace.silver.silver_jobs_current
+lineage_outputs:
+- workspace.gold.dim_job
+- workspace.gold.fact_job_postings
+generated_date: '2026-06-07T06:14:52.578535'
+contract_version: '1.0'
+status: active

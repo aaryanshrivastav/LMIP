@@ -1,0 +1,49 @@
+table_name: workspace.reporting.reporting_company_activity
+layer: reporting
+description: Company hiring activity metrics by sector
+primary_key:
+- sector_sk
+- company_sk
+business_keys:
+- sector_sk
+- company_sk
+columns:
+- name: sector_sk
+  type: BIGINT
+  nullable: false
+  description: Sector foreign key
+- name: company_sk
+  type: BIGINT
+  nullable: false
+  description: Company key
+- name: active_jobs
+  type: BIGINT
+  nullable: true
+  description: Current active jobs
+- name: total_jobs_30d
+  type: BIGINT
+  nullable: true
+  description: Jobs last 30 days
+- name: top_role
+  type: STRING
+  nullable: true
+  description: Most hired role
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last refresh
+partitioning:
+- sector_sk
+quality_rules:
+- rule: not_null
+  columns:
+  - sector_sk
+  - company_sk
+lineage_inputs:
+- workspace.gold.fact_job_postings
+- workspace.gold.dim_company
+- workspace.gold.dim_sector
+lineage_outputs: []
+generated_date: '2026-06-07T06:20:14.991753'
+contract_version: '1.0'
+status: active

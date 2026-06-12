@@ -1,0 +1,55 @@
+table_name: workspace.reporting.reporting_hiring_trends
+layer: reporting
+description: Aggregated hiring trends by date and sector for time-series analysis
+primary_key:
+- hiring_date_sk
+- sector_sk
+business_keys:
+- hiring_date_sk
+- sector_sk
+columns:
+- name: hiring_date_sk
+  type: BIGINT
+  nullable: false
+  description: Date key
+- name: sector_sk
+  type: BIGINT
+  nullable: false
+  description: Sector key
+- name: total_new_jobs
+  type: BIGINT
+  nullable: true
+  description: New jobs posted
+- name: total_active_jobs
+  type: BIGINT
+  nullable: true
+  description: Active job count
+- name: total_closed_jobs
+  type: BIGINT
+  nullable: true
+  description: Closed job count
+- name: unique_companies
+  type: BIGINT
+  nullable: true
+  description: Companies hiring
+- name: avg_days_to_fill
+  type: DECIMAL(10,2)
+  nullable: true
+  description: Average time to fill
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last refresh
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - hiring_date_sk
+  - sector_sk
+lineage_inputs:
+- workspace.gold.fact_job_postings
+- workspace.gold.dim_sector
+lineage_outputs: []
+generated_date: '2026-06-07T06:20:14.520488'
+contract_version: '1.0'
+status: active

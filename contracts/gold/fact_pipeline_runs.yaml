@@ -1,0 +1,76 @@
+table_name: workspace.gold.fact_pipeline_runs
+layer: gold
+description: Pipeline execution metrics for monitoring and data quality
+primary_key:
+- fact_pipeline_run_sk
+business_keys:
+- run_id
+columns:
+- name: fact_pipeline_run_sk
+  type: BIGINT
+  nullable: false
+  description: Fact surrogate key
+- name: run_id
+  type: STRING
+  nullable: false
+  description: Pipeline run identifier
+- name: pipeline_name
+  type: STRING
+  nullable: false
+  description: Pipeline name
+- name: run_date_sk
+  type: INT
+  nullable: false
+  description: FK to dim_date
+- name: run_timestamp
+  type: TIMESTAMP
+  nullable: false
+  description: Run start timestamp
+- name: run_duration_seconds
+  type: INT
+  nullable: true
+  description: Total run duration
+- name: records_processed
+  type: BIGINT
+  nullable: true
+  description: Records processed
+- name: records_inserted
+  type: BIGINT
+  nullable: true
+  description: Records inserted
+- name: records_updated
+  type: BIGINT
+  nullable: true
+  description: Records updated
+- name: records_failed
+  type: BIGINT
+  nullable: true
+  description: Records failed
+- name: status
+  type: STRING
+  nullable: false
+  description: SUCCESS, FAILED, PARTIAL
+partitioning:
+  type: date
+  columns:
+  - run_timestamp
+quality_rules:
+- rule: not_null
+  columns:
+  - fact_pipeline_run_sk
+  - run_id
+  - pipeline_name
+  - status
+- rule: valid_enum
+  column: status
+  values:
+  - SUCCESS
+  - FAILED
+  - PARTIAL
+lineage_inputs:
+- workspace.audit.audit_pipeline_runs
+lineage_outputs:
+- workspace.reporting.reporting_pipeline_health
+generated_date: '2026-06-07T06:14:52.836290'
+contract_version: '1.0'
+status: active

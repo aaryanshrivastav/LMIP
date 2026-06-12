@@ -64,7 +64,7 @@ quality_rules:
 lineage_inputs:
 - workspace.silver.silver_jobs_current
 lineage_outputs:
-- workspace.warehouse.dim_job
+- workspace.gold.dim_job
 generated_date: '2026-06-07T06:07:45.455782'
 contract_version: '1.0'
 status: active

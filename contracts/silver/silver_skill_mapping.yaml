@@ -63,8 +63,8 @@ quality_rules:
 lineage_inputs:
 - workspace.silver.silver_jobs_current
 lineage_outputs:
-- workspace.semantic.sem_skill_catalog
-- workspace.warehouse.bridge_job_skill
+- workspace.intermediate.inter_skill_catalog
+- workspace.gold.bridge_job_skill
 generated_date: '2026-06-07T06:07:45.481305'
 contract_version: '1.0'
 status: active

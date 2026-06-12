@@ -62,7 +62,7 @@ quality_rules:
 lineage_inputs:
 - workspace.bronze.bronze_job_snapshot
 lineage_outputs:
-- workspace.warehouse.fact_pipeline_runs
+- workspace.gold.fact_pipeline_runs
 generated_date: '2026-06-07T06:20:15.049101'
 contract_version: '1.0'
 status: active

@@ -1,0 +1,55 @@
+table_name: workspace.reporting.reporting_company_hiring
+layer: reporting
+description: Company-level hiring activity and metrics
+primary_key:
+- company_sk
+- hiring_date_sk
+business_keys:
+- company_sk
+- hiring_date_sk
+columns:
+- name: company_sk
+  type: BIGINT
+  nullable: false
+  description: Company key
+- name: hiring_date_sk
+  type: INT
+  nullable: false
+  description: Date key
+- name: active_jobs
+  type: BIGINT
+  nullable: true
+  description: Active job count
+- name: new_jobs_30d
+  type: BIGINT
+  nullable: true
+  description: New jobs last 30 days
+- name: top_role
+  type: STRING
+  nullable: true
+  description: Most hired role
+- name: top_location
+  type: STRING
+  nullable: true
+  description: Primary hiring location
+- name: remote_ratio
+  type: DECIMAL(5,4)
+  nullable: true
+  description: Ratio of remote jobs
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last refresh
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - company_sk
+  - hiring_date_sk
+lineage_inputs:
+- workspace.gold.fact_job_postings
+- workspace.gold.dim_company
+lineage_outputs: []
+generated_date: '2026-06-07T06:20:14.863469'
+contract_version: '1.0'
+status: active

@@ -60,7 +60,7 @@ quality_rules:
 lineage_inputs:
 - workspace.silver.silver_jobs_current
 lineage_outputs:
-- workspace.warehouse.fact_job_lifecycle
+- workspace.gold.fact_job_lifecycle
 - workspace.audit.audit_dq_results
 generated_date: '2026-06-07T06:07:45.399717'
 contract_version: '1.0'

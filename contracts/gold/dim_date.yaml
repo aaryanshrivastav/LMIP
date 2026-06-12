@@ -1,0 +1,89 @@
+table_name: workspace.gold.dim_date
+layer: gold
+description: Date dimension with calendar attributes for time-series analysis
+primary_key:
+- date_sk
+business_keys:
+- date_value
+columns:
+- name: date_sk
+  type: INT
+  nullable: false
+  description: Surrogate key (YYYYMMDD format)
+- name: date_value
+  type: DATE
+  nullable: false
+  description: Actual date
+- name: year
+  type: INT
+  nullable: false
+  description: Year (YYYY)
+- name: quarter
+  type: INT
+  nullable: false
+  description: Quarter (1-4)
+- name: month
+  type: INT
+  nullable: false
+  description: Month (1-12)
+- name: month_name
+  type: STRING
+  nullable: false
+  description: Month name
+- name: day_of_month
+  type: INT
+  nullable: false
+  description: Day (1-31)
+- name: day_of_week
+  type: INT
+  nullable: false
+  description: Day of week (1-7)
+- name: day_name
+  type: STRING
+  nullable: false
+  description: Day name
+- name: week_of_year
+  type: INT
+  nullable: false
+  description: ISO week number
+- name: is_weekend
+  type: BOOLEAN
+  nullable: false
+  description: Weekend flag
+- name: is_holiday
+  type: BOOLEAN
+  nullable: false
+  description: Holiday flag
+- name: fiscal_year
+  type: INT
+  nullable: true
+  description: Fiscal year
+- name: fiscal_quarter
+  type: INT
+  nullable: true
+  description: Fiscal quarter
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - date_sk
+  - date_value
+- rule: unique
+  columns:
+  - date_sk
+  - date_value
+- rule: valid_range
+  column: quarter
+  min: 1
+  max: 4
+- rule: valid_range
+  column: month
+  min: 1
+  max: 12
+lineage_inputs: []
+lineage_outputs:
+- workspace.gold.fact_job_postings
+- workspace.gold.fact_salary
+generated_date: '2026-06-07T06:14:52.170165'
+contract_version: '1.0'
+status: active

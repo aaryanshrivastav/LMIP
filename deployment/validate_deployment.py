@@ -55,7 +55,9 @@ class DeploymentValidator:
         required_schemas = [
             self.config.bronze_schema,
             self.config.silver_schema,
+            self.config.intermediate_schema,
             self.config.gold_schema,
+            self.config.reporting_schema,
             self.config.metadata_schema,
             self.config.audit_schema
         ]

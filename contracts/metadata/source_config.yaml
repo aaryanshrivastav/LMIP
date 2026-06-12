@@ -57,7 +57,7 @@ quality_rules:
       - source_name
 lineage_inputs: []
 lineage_outputs:
-  - workspace.warehouse.dim_source
+  - workspace.gold.dim_source
 generated_date: '2026-06-11'
 contract_version: '1.0'
 status: active

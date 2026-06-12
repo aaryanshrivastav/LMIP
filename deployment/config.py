@@ -29,7 +29,9 @@ class DeploymentConfig:
     catalog: str = "workspace"
     bronze_schema: str = "bronze"
     silver_schema: str = "silver"
+    intermediate_schema: str = "intermediate"
     gold_schema: str = "gold"
+    reporting_schema: str = "reporting"
     metadata_schema: str = "metadata"
     audit_schema: str = "audit"
     
@@ -60,7 +62,9 @@ class DeploymentConfig:
             catalog=os.getenv("CATALOG", "workspace"),
             bronze_schema=os.getenv("BRONZE_SCHEMA", "bronze"),
             silver_schema=os.getenv("SILVER_SCHEMA", "silver"),
+            intermediate_schema=os.getenv("INTERMEDIATE_SCHEMA", "intermediate"),
             gold_schema=os.getenv("GOLD_SCHEMA", "gold"),
+            reporting_schema=os.getenv("REPORTING_SCHEMA", "reporting"),
             metadata_schema=os.getenv("METADATA_SCHEMA", "metadata"),
             audit_schema=os.getenv("AUDIT_SCHEMA", "audit"),
             notification_email=os.getenv("NOTIFICATION_EMAIL", "aaryan.shrivastav1403@gmail.com"),
@@ -102,7 +106,8 @@ class DeploymentConfig:
         print(f"Databricks Host:    {self.databricks_host}")
         print(f"Workspace Root:     {self.workspace_root}")
         print(f"Catalog:            {self.catalog}")
-        print(f"Schemas:            {self.bronze_schema}, {self.silver_schema}, {self.gold_schema}")
+        print(f"Schemas:            bronze, silver, intermediate, gold, reporting")
+        print(f"                    metadata, audit")
         print(f"Notification Email: {self.notification_email}")
         print(f"Use Serverless:     {self.use_serverless}")
         print(f"Dry Run:            {self.dry_run}")

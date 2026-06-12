@@ -143,12 +143,12 @@ quality_rules:
   - enterprise_job_id
 - rule: referential_integrity
   column: source_name
-  reference_table: workspace.warehouse.dim_source
+  reference_table: workspace.gold.dim_source
 lineage_inputs:
 - workspace.silver.silver_jobs_staging
 lineage_outputs:
-- workspace.warehouse.dim_job
-- workspace.warehouse.fact_job_postings
+- workspace.gold.dim_job
+- workspace.gold.fact_job_postings
 generated_date: '2026-06-07T06:07:45.358178'
 contract_version: '1.0'
 status: active

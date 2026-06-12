@@ -1,0 +1,55 @@
+table_name: workspace.reporting.reporting_skill_demand
+layer: reporting
+description: Skill demand analytics showing most requested skills and trends
+primary_key:
+- skill_sk
+- demand_date_sk
+business_keys:
+- skill_sk
+- demand_date_sk
+columns:
+- name: skill_sk
+  type: BIGINT
+  nullable: false
+  description: Skill key
+- name: demand_date_sk
+  type: INT
+  nullable: false
+  description: Date key
+- name: job_count
+  type: BIGINT
+  nullable: true
+  description: Jobs requiring skill
+- name: company_count
+  type: BIGINT
+  nullable: true
+  description: Companies requiring skill
+- name: avg_salary_usd
+  type: DECIMAL(15,2)
+  nullable: true
+  description: Average salary for skill
+- name: growth_rate_30d
+  type: DECIMAL(10,2)
+  nullable: true
+  description: 30-day growth rate
+- name: top_sector
+  type: STRING
+  nullable: true
+  description: Primary sector demanding skill
+- name: updated_at
+  type: TIMESTAMP
+  nullable: false
+  description: Last refresh
+partitioning: null
+quality_rules:
+- rule: not_null
+  columns:
+  - skill_sk
+  - demand_date_sk
+lineage_inputs:
+- workspace.gold.bridge_job_skill
+- workspace.gold.fact_job_postings
+lineage_outputs: []
+generated_date: '2026-06-07T06:20:14.746809'
+contract_version: '1.0'
+status: active

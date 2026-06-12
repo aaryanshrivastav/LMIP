@@ -62,8 +62,8 @@ quality_rules:
       - RESTRICTED
       - PRIVATE
 lineage_inputs:
-  - workspace.gold.gold_job_market_summary
-  - workspace.gold.gold_sector_trends
+  - workspace.reporting.reporting_job_market_summary
+  - workspace.reporting.reporting_sector_trends
 lineage_outputs: []
 generated_date: '2026-06-11'
 contract_version: '1.0'
