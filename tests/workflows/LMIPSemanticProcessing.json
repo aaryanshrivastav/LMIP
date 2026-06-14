@@ -86,13 +86,44 @@
           "task_key": "Skill_Graph_Build"
         }
       ],
-      "run_if": "ALL_SUCCESS",
+      "run_if": "ALL_DONE",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
-        "source": "WORKSPACE"
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "rows_read": "0",
+          "rows_written": "0",
+          "start_time": "{{start_time}}"
+        }
       },
       "timeout_seconds": 0,
       "email_notifications": {}
+    },
+    {
+      "task_key": "Notify_On_Failure",
+      "depends_on": [
+        {
+          "task_key": "Logger"
+        }
+      ],
+      "run_if": "AT_LEAST_ONE_FAILED",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/audit_notification_dispatch",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "notification_type": "critical_alert",
+          "alert_severity": "HIGH",
+          "alert_title": "LMIPSemanticProcessing_TEST [TEST] Pipeline Failed",
+          "alert_message": "TEST Pipeline LMIPSemanticProcessing_TEST (Run ID: {{run_id}}) encountered failures. Check audit logs.",
+          "alert_context": "{\"workflow_name\": \"LMIPSemanticProcessing_TEST\", \"run_id\": \"{{run_id}}\", \"run_page_url\": \"{{run_page_url}}\", \"environment\": \"TEST\"}",
+          "recipient_list": "aaryan.shrivastav1403@gmail.com",
+          "channel": "email"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
     }
   ],
   "format": "MULTI_TASK",

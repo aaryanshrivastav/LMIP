@@ -1,7 +1,9 @@
 {
   "name": "LMIP_Silver_Processing",
   "email_notifications": {
-    "on_failure": ["aaryan.shrivastav1403@gmail.com"],
+    "on_failure": [
+      "aaryan.shrivastav1403@gmail.com"
+    ],
     "no_alert_for_skipped_runs": false
   },
   "timeout_seconds": 10800,
@@ -32,7 +34,11 @@
     },
     {
       "task_key": "Silver_Detect_CDC",
-      "depends_on": [{"task_key": "Silver_Standardize_Jobs"}],
+      "depends_on": [
+        {
+          "task_key": "Silver_Standardize_Jobs"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_detect_cdc",
@@ -48,7 +54,11 @@
     },
     {
       "task_key": "Silver_Apply_Soft_Delete_Restore",
-      "depends_on": [{"task_key": "Silver_Detect_CDC"}],
+      "depends_on": [
+        {
+          "task_key": "Silver_Detect_CDC"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_apply_soft_delete_restore",
@@ -61,7 +71,11 @@
     },
     {
       "task_key": "Silver_DQ_Validate",
-      "depends_on": [{"task_key": "Silver_Apply_Soft_Delete_Restore"}],
+      "depends_on": [
+        {
+          "task_key": "Silver_Apply_Soft_Delete_Restore"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_dq_validate",
@@ -78,7 +92,11 @@
     },
     {
       "task_key": "Silver_Skill_Extract",
-      "depends_on": [{"task_key": "Silver_DQ_Validate"}],
+      "depends_on": [
+        {
+          "task_key": "Silver_DQ_Validate"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_skill_extract",
@@ -94,7 +112,11 @@
     },
     {
       "task_key": "Silver_Sector_Assign",
-      "depends_on": [{"task_key": "Silver_DQ_Validate"}],
+      "depends_on": [
+        {
+          "task_key": "Silver_DQ_Validate"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_sector_assign",
@@ -112,8 +134,12 @@
     {
       "task_key": "Silver_Job_Identity_Map",
       "depends_on": [
-        {"task_key": "Silver_Skill_Extract"},
-        {"task_key": "Silver_Sector_Assign"}
+        {
+          "task_key": "Silver_Skill_Extract"
+        },
+        {
+          "task_key": "Silver_Sector_Assign"
+        }
       ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
@@ -129,13 +155,17 @@
       "environment_key": "Default"
     },
     {
-      "task_key": "Log_Pipeline_Audit",
-      "depends_on": [{"task_key": "Silver_Job_Identity_Map"}],
-      "run_if": "ALL_SUCCESS",
+      "task_key": "Log_Pipeline_Execution",
+      "depends_on": [
+        {
+          "task_key": "Silver_Job_Identity_Map"
+        }
+      ],
+      "run_if": "ALL_DONE",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
         "base_parameters": {
-          "pipeline_name": "silver_processing",
+          "pipeline_name": "LMIP_Silver_Processing",
           "job_id": "{{job.id}}",
           "run_id": "{{run.id}}",
           "status": "success",
@@ -147,8 +177,34 @@
         },
         "source": "WORKSPACE"
       },
-      "timeout_seconds": 300,
-      "max_retries": 1,
+      "timeout_seconds": 600,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Notify_On_Failure",
+      "depends_on": [
+        {
+          "task_key": "Silver_Job_Identity_Map"
+        }
+      ],
+      "run_if": "AT_LEAST_ONE_FAILED",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/audit_notification_dispatch",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "notification_type": "critical_alert",
+          "alert_severity": "HIGH",
+          "alert_title": "LMIP Silver Processing Pipeline Failed",
+          "alert_message": "Pipeline LMIP_Silver_Processing (Run ID: {{run_id}}) encountered failures. Check audit logs and investigate immediately.",
+          "alert_context": "{\"workflow_name\": \"LMIP_Silver_Processing\", \"run_id\": \"{{run_id}}\", \"run_page_url\": \"{{run_page_url}}\"}",
+          "recipient_list": "aaryan.shrivastav1403@gmail.com,data-ops-team@company.com",
+          "channel": "email"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 2,
       "email_notifications": {},
       "environment_key": "Default"
     }

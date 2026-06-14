@@ -6,7 +6,7 @@
 -- Purpose: Physical table definition for dedupe_tracking
 -- Dependencies: workspace.bronze.bronze_job_snapshot
 -- Consumers: workspace.audit.audit_dq_results
--- Expected Output: Table created with 10 columns
+-- Expected Output: Table created with 11 columns
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS workspace.bronze.dedupe_tracking (
@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS workspace.bronze.dedupe_tracking (
   duplicate_count INT NOT NULL COMMENT 'Number of duplicate occurrences',
   first_seen_timestamp TIMESTAMP COMMENT 'First occurrence timestamp',
   last_seen_timestamp TIMESTAMP COMMENT 'Last occurrence timestamp',
+  batch_status STRING NOT NULL DEFAULT 'PROCESSED' COMMENT 'Batch processing status: PROCESSED, ROLLED_BACK',
   tracking_timestamp TIMESTAMP NOT NULL COMMENT 'When dedupe was tracked'
 ,
   PRIMARY KEY (dedupe_id)

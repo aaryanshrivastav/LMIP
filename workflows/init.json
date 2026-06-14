@@ -1,9 +1,15 @@
 {
   "name": "LMIP_Initialization",
   "email_notifications": {
-    "on_start": ["aaryan.shrivastav1403@gmail.com"],
-    "on_success": ["aaryan.shrivastav1403@gmail.com"],
-    "on_failure": ["aaryan.shrivastav1403@gmail.com"],
+    "on_start": [
+      "aaryan.shrivastav1403@gmail.com"
+    ],
+    "on_success": [
+      "aaryan.shrivastav1403@gmail.com"
+    ],
+    "on_failure": [
+      "aaryan.shrivastav1403@gmail.com"
+    ],
     "no_alert_for_skipped_runs": false
   },
   "timeout_seconds": 3600,
@@ -29,7 +35,11 @@
     },
     {
       "task_key": "Init_Seed_Metadata",
-      "depends_on": [{"task_key": "Init_Create_Schemas"}],
+      "depends_on": [
+        {
+          "task_key": "Init_Create_Schemas"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/init/init_seed_metadata",
@@ -46,7 +56,11 @@
     },
     {
       "task_key": "Init_Validate_Environment",
-      "depends_on": [{"task_key": "Init_Seed_Metadata"}],
+      "depends_on": [
+        {
+          "task_key": "Init_Seed_Metadata"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/init/init_validate_env",
@@ -63,7 +77,11 @@
     },
     {
       "task_key": "Init_Register_Secrets",
-      "depends_on": [{"task_key": "Init_Validate_Environment"}],
+      "depends_on": [
+        {
+          "task_key": "Init_Validate_Environment"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/init/init_register_secrets",
@@ -79,7 +97,11 @@
     },
     {
       "task_key": "Init_Superset_Bootstrap",
-      "depends_on": [{"task_key": "Init_Register_Secrets"}],
+      "depends_on": [
+        {
+          "task_key": "Init_Register_Secrets"
+        }
+      ],
       "run_if": "ALL_DONE",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/init/init_superset_bootstrap",
@@ -92,8 +114,63 @@
       "timeout_seconds": 600,
       "max_retries": 1,
       "email_notifications": {
-        "on_success": ["aaryan.shrivastav1403@gmail.com"]
+        "on_success": [
+          "aaryan.shrivastav1403@gmail.com"
+        ]
       },
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Log_Pipeline_Execution",
+      "depends_on": [
+        {
+          "task_key": "Init_Superset_Bootstrap"
+        }
+      ],
+      "run_if": "ALL_DONE",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "pipeline_name": "LMIP_Initialization",
+          "run_id": "{{run_id}}",
+          "status": "{{tasks.Init_Superset_Bootstrap.state}}",
+          "start_time": "{{start_time}}",
+          "rows_read": "0",
+          "rows_written": "0",
+          "catalog": "workspace",
+          "schema": "audit"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Notify_On_Failure",
+      "depends_on": [
+        {
+          "task_key": "Init_Superset_Bootstrap"
+        }
+      ],
+      "run_if": "AT_LEAST_ONE_FAILED",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/audit_notification_dispatch",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "notification_type": "critical_alert",
+          "alert_severity": "HIGH",
+          "alert_title": "LMIP_Initialization Pipeline Failed",
+          "alert_message": "Pipeline LMIP_Initialization (Run ID: {{run_id}}) encountered failures. Check audit logs and investigate immediately.",
+          "alert_context": "{\"workflow_name\": \"LMIP_Initialization\", \"run_id\": \"{{run_id}}\", \"run_page_url\": \"{{run_page_url}}\"}",
+          "recipient_list": "aaryan.shrivastav1403@gmail.com,data-ops-team@company.com",
+          "channel": "email"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 2,
+      "email_notifications": {},
       "environment_key": "Default"
     }
   ],

@@ -165,7 +165,7 @@
       "environment_key": "Default"
     },
     {
-      "task_key": "Log_Gold_Execution",
+      "task_key": "Log_Pipeline_Execution",
       "depends_on": [
         {
           "task_key": "Gold_Pipeline_Health"
@@ -185,16 +185,59 @@
       ],
       "run_if": "ALL_DONE",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_runs",
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
         "source": "WORKSPACE",
         "base_parameters": {
           "pipeline_name": "LMIP_Gold_Build",
-          "layer": "gold",
-          "environment": "production"
+          "run_id": "{{run_id}}",
+          "status": "{{tasks.Gold_Pipeline_Health.state}}",
+          "start_time": "{{start_time}}",
+          "rows_read": "0",
+          "rows_written": "0",
+          "catalog": "workspace",
+          "schema": "audit"
         }
       },
       "timeout_seconds": 600,
-      "max_retries": 1,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Notify_On_Failure",
+      "depends_on": [
+        {
+          "task_key": "Gold_Pipeline_Health"
+        },
+        {
+          "task_key": "Gold_Hiring_Activity"
+        },
+        {
+          "task_key": "Gold_Skill_Demand_By_Sector"
+        },
+        {
+          "task_key": "Gold_Company_Activity"
+        },
+        {
+          "task_key": "Gold_Location_Trends"
+        }
+      ],
+      "run_if": "AT_LEAST_ONE_FAILED",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/audit_notification_dispatch",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "notification_type": "critical_alert",
+          "alert_severity": "HIGH",
+          "alert_title": "LMIP Gold Build Pipeline Failed",
+          "alert_message": "Pipeline LMIP_Gold_Build (Run ID: {{run_id}}) encountered failures. Check audit logs and investigate immediately.",
+          "alert_context": "{\"workflow_name\": \"LMIP_Gold_Build\", \"run_id\": \"{{run_id}}\", \"run_page_url\": \"{{run_page_url}}\"}",
+          "recipient_list": "aaryan.shrivastav1403@gmail.com,data-ops-team@company.com",
+          "channel": "email"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 2,
       "email_notifications": {},
       "environment_key": "Default"
     }

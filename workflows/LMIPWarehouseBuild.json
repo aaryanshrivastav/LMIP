@@ -1,7 +1,9 @@
 {
   "name": "LMIP_Warehouse_Build",
   "email_notifications": {
-    "on_failure": ["aaryan.shrivastav1403@gmail.com"],
+    "on_failure": [
+      "aaryan.shrivastav1403@gmail.com"
+    ],
     "no_alert_for_skipped_runs": false
   },
   "timeout_seconds": 18000,
@@ -88,7 +90,11 @@
     },
     {
       "task_key": "Dim_Company",
-      "depends_on": [{"task_key": "Dim_Sector"}],
+      "depends_on": [
+        {
+          "task_key": "Dim_Sector"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_company",
@@ -101,7 +107,11 @@
     },
     {
       "task_key": "Dim_Company_Alias",
-      "depends_on": [{"task_key": "Dim_Company"}],
+      "depends_on": [
+        {
+          "task_key": "Dim_Company"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_company_alias",
@@ -115,9 +125,15 @@
     {
       "task_key": "Dim_Job_SCD2",
       "depends_on": [
-        {"task_key": "Dim_Company"},
-        {"task_key": "Dim_Location"},
-        {"task_key": "Dim_Role"}
+        {
+          "task_key": "Dim_Company"
+        },
+        {
+          "task_key": "Dim_Location"
+        },
+        {
+          "task_key": "Dim_Role"
+        }
       ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
@@ -132,8 +148,12 @@
     {
       "task_key": "Bridge_Job_Skill",
       "depends_on": [
-        {"task_key": "Dim_Job_SCD2"},
-        {"task_key": "Dim_Skill"}
+        {
+          "task_key": "Dim_Job_SCD2"
+        },
+        {
+          "task_key": "Dim_Skill"
+        }
       ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
@@ -148,8 +168,12 @@
     {
       "task_key": "Fact_Job_Postings",
       "depends_on": [
-        {"task_key": "Dim_Date"},
-        {"task_key": "Dim_Job_SCD2"}
+        {
+          "task_key": "Dim_Date"
+        },
+        {
+          "task_key": "Dim_Job_SCD2"
+        }
       ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
@@ -164,8 +188,12 @@
     {
       "task_key": "Fact_Job_Lifecycle",
       "depends_on": [
-        {"task_key": "Dim_Date"},
-        {"task_key": "Dim_Job_SCD2"}
+        {
+          "task_key": "Dim_Date"
+        },
+        {
+          "task_key": "Dim_Job_SCD2"
+        }
       ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
@@ -180,8 +208,12 @@
     {
       "task_key": "Fact_Salary",
       "depends_on": [
-        {"task_key": "Dim_Date"},
-        {"task_key": "Dim_Job_SCD2"}
+        {
+          "task_key": "Dim_Date"
+        },
+        {
+          "task_key": "Dim_Job_SCD2"
+        }
       ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
@@ -195,7 +227,11 @@
     },
     {
       "task_key": "Fact_Pipeline_Runs",
-      "depends_on": [{"task_key": "Dim_Date"}],
+      "depends_on": [
+        {
+          "task_key": "Dim_Date"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_fact_pipeline_runs",
@@ -209,13 +245,23 @@
     {
       "task_key": "Log_Pipeline_Audit",
       "depends_on": [
-        {"task_key": "Bridge_Job_Skill"},
-        {"task_key": "Fact_Job_Postings"},
-        {"task_key": "Fact_Job_Lifecycle"},
-        {"task_key": "Fact_Salary"},
-        {"task_key": "Fact_Pipeline_Runs"}
+        {
+          "task_key": "Bridge_Job_Skill"
+        },
+        {
+          "task_key": "Fact_Job_Postings"
+        },
+        {
+          "task_key": "Fact_Job_Lifecycle"
+        },
+        {
+          "task_key": "Fact_Salary"
+        },
+        {
+          "task_key": "Fact_Pipeline_Runs"
+        }
       ],
-      "run_if": "ALL_SUCCESS",
+      "run_if": "ALL_DONE",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
         "base_parameters": {
@@ -225,12 +271,43 @@
           "status": "success",
           "start_time": "{{run.start_time}}",
           "catalog": "workspace",
-          "schema": "audit"
+          "schema": "audit",
+          "rows_read": "0",
+          "rows_written": "0"
         },
         "source": "WORKSPACE"
       },
       "timeout_seconds": 300,
       "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Notify_On_Failure",
+      "depends_on": [
+        {
+          "task_key": "Dim_Source"
+        },
+        {
+          "task_key": "Dim_Company_Alias"
+        }
+      ],
+      "run_if": "AT_LEAST_ONE_FAILED",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/audit_notification_dispatch",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "notification_type": "critical_alert",
+          "alert_severity": "HIGH",
+          "alert_title": "LMIP_Warehouse_Build Pipeline Failed",
+          "alert_message": "Pipeline LMIP_Warehouse_Build (Run ID: {{run_id}}) encountered failures. Check audit logs and investigate immediately.",
+          "alert_context": "{\"workflow_name\": \"LMIP_Warehouse_Build\", \"run_id\": \"{{run_id}}\", \"run_page_url\": \"{{run_page_url}}\"}",
+          "recipient_list": "aaryan.shrivastav1403@gmail.com,data-ops-team@company.com",
+          "channel": "email"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 2,
       "email_notifications": {},
       "environment_key": "Default"
     }

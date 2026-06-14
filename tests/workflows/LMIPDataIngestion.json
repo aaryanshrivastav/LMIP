@@ -123,6 +123,59 @@
       "timeout_seconds": 0,
       "email_notifications": {},
       "environment_key": "Default"
+    },
+    {
+      "task_key": "Log_Pipeline_Execution",
+      "depends_on": [
+        {
+          "task_key": "Finalise_Batch"
+        }
+      ],
+      "run_if": "ALL_DONE",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "pipeline_name": "LMIPDataIngestion_TEST",
+          "run_id": "{{run_id}}",
+          "status": "{{tasks.Finalise_Batch.state}}",
+          "start_time": "{{start_time}}",
+          "rows_read": "0",
+          "rows_written": "0",
+          "catalog": "workspace",
+          "schema": "audit"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Notify_On_Failure",
+      "depends_on": [
+        {
+          "task_key": "Finalise_Batch"
+        }
+      ],
+      "run_if": "AT_LEAST_ONE_FAILED",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/audit_notification_dispatch",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "notification_type": "critical_alert",
+          "alert_severity": "HIGH",
+          "alert_title": "LMIPDataIngestion_TEST [TEST] Pipeline Failed",
+          "alert_message": "TEST Pipeline LMIPDataIngestion_TEST (Run ID: {{run_id}}) encountered failures. Check audit logs.",
+          "alert_context": "{\"workflow_name\": \"LMIPDataIngestion_TEST\", \"run_id\": \"{{run_id}}\", \"run_page_url\": \"{{run_page_url}}\", \"environment\": \"TEST\"}",
+          "recipient_list": "aaryan.shrivastav1403@gmail.com",
+          "channel": "email"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
     }
   ],
   "format": "MULTI_TASK",

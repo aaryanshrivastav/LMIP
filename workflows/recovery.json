@@ -1,9 +1,15 @@
 {
   "name": "LMIP_Recovery",
   "email_notifications": {
-    "on_start": ["aaryan.shrivastav1403@gmail.com"],
-    "on_success": ["aaryan.shrivastav1403@gmail.com"],
-    "on_failure": ["aaryan.shrivastav1403@gmail.com"],
+    "on_start": [
+      "aaryan.shrivastav1403@gmail.com"
+    ],
+    "on_success": [
+      "aaryan.shrivastav1403@gmail.com"
+    ],
+    "on_failure": [
+      "aaryan.shrivastav1403@gmail.com"
+    ],
     "no_alert_for_skipped_runs": false
   },
   "timeout_seconds": 21600,
@@ -13,7 +19,30 @@
   "max_concurrent_runs": 1,
   "tasks": [
     {
+      "task_key": "Recovery_Rollback_Batch_Optional",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/bronze/bronze_rollback_batch",
+        "base_parameters": {
+          "batch_id": "{{job.parameters.rollback_batch_id}}",
+          "catalog": "workspace",
+          "reason": "{{job.parameters.rollback_reason}}",
+          "dry_run": "{{job.parameters.rollback_dry_run}}"
+        },
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 3600,
+      "max_retries": 1,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
       "task_key": "Recovery_Bronze_Replay_Backfill",
+      "depends_on": [
+        {
+          "task_key": "Recovery_Rollback_Batch_Optional"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/bronze/bronze_replay_backfill",
@@ -31,7 +60,11 @@
     },
     {
       "task_key": "Recovery_Silver_Reprocess",
-      "depends_on": [{"task_key": "Recovery_Bronze_Replay_Backfill"}],
+      "depends_on": [
+        {
+          "task_key": "Recovery_Bronze_Replay_Backfill"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_standardize_jobs",
@@ -48,7 +81,11 @@
     },
     {
       "task_key": "Recovery_CDC_Reprocess",
-      "depends_on": [{"task_key": "Recovery_Silver_Reprocess"}],
+      "depends_on": [
+        {
+          "task_key": "Recovery_Silver_Reprocess"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/silver/silver_detect_cdc",
@@ -65,7 +102,11 @@
     },
     {
       "task_key": "Recovery_Semantic_Reprocess",
-      "depends_on": [{"task_key": "Recovery_CDC_Reprocess"}],
+      "depends_on": [
+        {
+          "task_key": "Recovery_CDC_Reprocess"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/semantic/inter_role_map",
@@ -82,7 +123,11 @@
     },
     {
       "task_key": "Recovery_Warehouse_Rebuild",
-      "depends_on": [{"task_key": "Recovery_Semantic_Reprocess"}],
+      "depends_on": [
+        {
+          "task_key": "Recovery_Semantic_Reprocess"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/warehouse/wh_dim_job_scd2",
@@ -98,7 +143,11 @@
     },
     {
       "task_key": "Recovery_Quarantine_Manage",
-      "depends_on": [{"task_key": "Recovery_Warehouse_Rebuild"}],
+      "depends_on": [
+        {
+          "task_key": "Recovery_Warehouse_Rebuild"
+        }
+      ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
         "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/quarantine/quarantine_manage",
@@ -117,7 +166,9 @@
     {
       "task_key": "Recovery_Validation_Report",
       "depends_on": [
-        {"task_key": "Recovery_Quarantine_Manage"}
+        {
+          "task_key": "Recovery_Quarantine_Manage"
+        }
       ],
       "run_if": "ALL_DONE",
       "notebook_task": {
@@ -131,12 +182,79 @@
       "timeout_seconds": 1800,
       "max_retries": 1,
       "email_notifications": {
-        "on_success": ["aaryan.shrivastav1403@gmail.com"]
+        "on_success": [
+          "aaryan.shrivastav1403@gmail.com"
+        ]
       },
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Log_Pipeline_Execution",
+      "depends_on": [
+        {
+          "task_key": "Recovery_Validation_Report"
+        }
+      ],
+      "run_if": "ALL_DONE",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/log_pipeline_run",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "pipeline_name": "LMIP_Recovery",
+          "run_id": "{{run_id}}",
+          "status": "{{tasks.Recovery_Validation_Report.state}}",
+          "start_time": "{{start_time}}",
+          "rows_read": "0",
+          "rows_written": "0",
+          "catalog": "workspace",
+          "schema": "audit"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 2,
+      "email_notifications": {},
+      "environment_key": "Default"
+    },
+    {
+      "task_key": "Notify_On_Failure",
+      "depends_on": [
+        {
+          "task_key": "Recovery_Validation_Report"
+        }
+      ],
+      "run_if": "AT_LEAST_ONE_FAILED",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/audit/audit_notification_dispatch",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "notification_type": "critical_alert",
+          "alert_severity": "HIGH",
+          "alert_title": "LMIP_Recovery Pipeline Failed",
+          "alert_message": "Pipeline LMIP_Recovery (Run ID: {{run_id}}) encountered failures. Check audit logs and investigate immediately.",
+          "alert_context": "{\\\"workflow_name\\\": \\\"LMIP_Recovery\\\", \\\"run_id\\\": \\\"{{run_id}}\\\", \\\"run_page_url\\\": \\\"{{run_page_url}}\\\"}",
+          "recipient_list": "aaryan.shrivastav1403@gmail.com,data-ops-team@company.com",
+          "channel": "email"
+        }
+      },
+      "timeout_seconds": 600,
+      "max_retries": 2,
+      "email_notifications": {},
       "environment_key": "Default"
     }
   ],
   "parameters": [
+    {
+      "name": "rollback_batch_id",
+      "default": ""
+    },
+    {
+      "name": "rollback_reason",
+      "default": "Data quality issue"
+    },
+    {
+      "name": "rollback_dry_run",
+      "default": "true"
+    },
     {
       "name": "start_date",
       "default": "2026-06-01"
