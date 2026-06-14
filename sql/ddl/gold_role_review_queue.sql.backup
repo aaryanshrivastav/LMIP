@@ -4,7 +4,7 @@
 -- Description: Queue of job roles requiring manual review and validation
 -- ============================================================================
 -- Purpose: Physical table definition for role_review_queue
--- Dependencies: workspace.intermediate.inter_job_role_map
+-- Dependencies: workspace.semantic.sem_job_role_map
 -- Expected Output: Table created with 7 columns
 -- ============================================================================
 

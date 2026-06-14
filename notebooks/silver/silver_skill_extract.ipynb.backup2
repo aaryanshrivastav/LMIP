@@ -4,7 +4,10 @@
    "cell_type": "markdown",
    "metadata": {
     "application/vnd.databricks.v1+cell": {
-     "cellMetadata": {},
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
      "inputWidgets": {},
      "nuid": "91e3964d-7aec-4de4-b910-f7762864cf08",
      "showTitle": true,
@@ -13,7 +16,42 @@
     }
    },
    "source": [
-    "# Silver: Sector-Aware Skill ExtractionExtracts technical and soft skills from job descriptions using **sector-specific skill dictionaries**.## Sector Intelligence- Joins with `intermediate.inter_sector_map` for job sector classification- Applies **universal skills** (programming, cloud, DevOps) to all jobs- Applies **sector-specific skills** based on NAICS codes:  - **Healthcare (62)**: EPIC, Cerner, HL7, HIPAA  - **Finance (52)**: Bloomberg Terminal, Risk Modeling, SOX  - **Manufacturing (31-33)**: CAD, PLC, Six Sigma, SCADA  - **Tech (51)**: Microservices, API Design, SRE  - **Professional Services (54)**: PMP, Business Analysis  - **Retail (44-45)**: POS, Inventory, E-commerce  - **Construction (23)**: BIM, Primavera, OSHA## Extraction Methods1. **Keyword matching** (deterministic, high confidence)2. **Pattern matching** (regex patterns for skills)3. **NLP extraction** (spaCy entity recognition)4. **Future**: LLM-based extraction for complex cases## Architecture**Input**: `silver.silver_jobs_current`  **Output**: `silver.silver_skill_mapping`  **Mode**: Incremental (process new batches only)## Batch Processing- Tracks processed batches in `metadata.skill_extraction_batches`- Automatically processes all unprocessed batches- Idempotent: safe to re-run- Skills normalized to taxonomy (future enhancement)"
+    "# Silver: Sector-Aware Skill Extraction\n",
+    "\n",
+    "Extracts technical and soft skills from job descriptions using **sector-specific skill dictionaries**.\n",
+    "\n",
+    "## Sector Intelligence\n",
+    "\n",
+    "- Joins with `semantic.sem_sector_map` for job sector classification\n",
+    "- Applies **universal skills** (programming, cloud, DevOps) to all jobs\n",
+    "- Applies **sector-specific skills** based on NAICS codes:\n",
+    "  - **Healthcare (62)**: EPIC, Cerner, HL7, HIPAA\n",
+    "  - **Finance (52)**: Bloomberg Terminal, Risk Modeling, SOX\n",
+    "  - **Manufacturing (31-33)**: CAD, PLC, Six Sigma, SCADA\n",
+    "  - **Tech (51)**: Microservices, API Design, SRE\n",
+    "  - **Professional Services (54)**: PMP, Business Analysis\n",
+    "  - **Retail (44-45)**: POS, Inventory, E-commerce\n",
+    "  - **Construction (23)**: BIM, Primavera, OSHA\n",
+    "\n",
+    "## Extraction Methods\n",
+    "\n",
+    "1. **Keyword matching** (deterministic, high confidence)\n",
+    "2. **Pattern matching** (regex patterns for skills)\n",
+    "3. **NLP extraction** (spaCy entity recognition)\n",
+    "4. **Future**: LLM-based extraction for complex cases\n",
+    "\n",
+    "## Architecture\n",
+    "\n",
+    "**Input**: `silver.silver_jobs_current`  \n",
+    "**Output**: `silver.silver_skill_mapping`  \n",
+    "**Mode**: Incremental (process new batches only)\n",
+    "\n",
+    "## Batch Processing\n",
+    "\n",
+    "- Tracks processed batches in `metadata.skill_extraction_batches`\n",
+    "- Automatically processes all unprocessed batches\n",
+    "- Idempotent: safe to re-run\n",
+    "- Skills normalized to taxonomy (future enhancement)"
    ]
   },
   {
@@ -474,7 +512,7 @@
     "                COALESCE(s.canonical_sector_code, 'UNKNOWN') as sector_code,\n",
     "                s.canonical_sector_name as sector_name\n",
     "            FROM {SILVER_SCHEMA}.silver_jobs_current j\n",
-    "            LEFT JOIN workspace.semantic.inter_sector_map s\n",
+    "            LEFT JOIN workspace.semantic.sem_sector_map s\n",
     "                ON j.enterprise_job_id = s.enterprise_job_id\n",
     "            WHERE j.current_batch_id = '{current_batch_id}'\n",
     "            AND j.is_active = true AND j.soft_delete_flag = false\n",

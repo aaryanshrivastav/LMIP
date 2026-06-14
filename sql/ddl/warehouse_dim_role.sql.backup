@@ -4,7 +4,7 @@
 -- Description: Job role dimension with canonical role definitions
 -- ============================================================================
 -- Purpose: Physical table definition for dim_role
--- Dependencies: workspace.intermediate.inter_job_role_map
+-- Dependencies: workspace.semantic.sem_job_role_map
 -- Consumers: workspace.warehouse.dim_job, workspace.warehouse.fact_job_postings
 -- Expected Output: Table created with 8 columns
 -- ============================================================================

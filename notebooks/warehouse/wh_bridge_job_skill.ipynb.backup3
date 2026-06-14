@@ -13,7 +13,24 @@
     }
    },
    "source": [
-    "# Job-Skill Bridge Table LoaderThis notebook maintains the `warehouse.bridge_job_skill` bridge table.**Purpose**: Connect jobs to skills with evidence-based relationships**Key Features**:* Many-to-many relationship between jobs and skills* Confidence scores and evidence types* Temporal alignment with job SCD2 versions (effective_from/effective_to)* Bridge records follow job version lifecycle**Sources**: * `intermediate.inter_job_skill_evidence` (skill evidence)* `warehouse.dim_job` (job versions)* `warehouse.dim_skill` (skills)**Target**: `workspace.warehouse.bridge_job_skill`"
+    "# Job-Skill Bridge Table Loader\n",
+    "\n",
+    "This notebook maintains the `warehouse.bridge_job_skill` bridge table.\n",
+    "\n",
+    "**Purpose**: Connect jobs to skills with evidence-based relationships\n",
+    "\n",
+    "**Key Features**:\n",
+    "* Many-to-many relationship between jobs and skills\n",
+    "* Confidence scores and evidence types\n",
+    "* Temporal alignment with job SCD2 versions (effective_from/effective_to)\n",
+    "* Bridge records follow job version lifecycle\n",
+    "\n",
+    "**Sources**: \n",
+    "* `semantic.inter_job_skill_evidence` (skill evidence)\n",
+    "* `warehouse.dim_job` (job versions)\n",
+    "* `warehouse.dim_skill` (skills)\n",
+    "\n",
+    "**Target**: `workspace.warehouse.bridge_job_skill`"
    ]
   },
   {

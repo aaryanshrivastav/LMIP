@@ -1,12 +1,12 @@
-# Semantic Processing Pipeline
+# Intermediate Enrichment Pipeline
 
-This folder contains the semantic processing notebooks that transform silver layer job data into canonical, semantically meaningful representations. These notebooks implement a **hybrid semantic matching strategy** combining deterministic rules with optional machine learning fallbacks.
+This folder contains the intermediate enrichment notebooks that transform silver layer job data into canonical, semantically meaningful representations. These notebooks implement a **hybrid semantic matching strategy** combining deterministic rules with optional machine learning fallbacks.
 
 ---
 
 ## Overview
 
-The semantic layer sits between **silver** (cleansed job data) and **gold/warehouse** layers (dimensional/aggregated data), enriching job postings with:
+The intermediate layer sits between **silver** (cleansed job data) and **gold/reporting** layers (dimensional/aggregated data), enriching job postings with:
 
 * **Canonical role taxonomies** - Map job titles to standard occupations
 * **Skill catalogs and graphs** - Build comprehensive skill ontologies and relationships
@@ -71,28 +71,28 @@ All semantic notebooks read from:
 ### Output
 Results are written to two schemas:
 
-**`workspace.semantic.*`** - Canonical semantic mappings:
-* `sem_job_role_map` - Job title to canonical role mappings
-* `sem_company_map` - Company canonicalization results
-* `sem_sector_map` - Industry sector normalizations
-* `sem_skill_catalog` - Canonical skill taxonomy
-* `sem_skill_graph` - Skill relationship graph
+**`workspace.intermediate.*`** - Canonical intermediate mappings:
+* `inter_job_role_map` - Job title to canonical role mappings
+* `inter_company_map` - Company canonicalization results
+* `inter_sector_map` - Industry sector normalizations
+* `inter_skill_catalog` - Canonical skill taxonomy
+* `inter_skill_graph` - Skill relationship graph
 
-**`workspace.silver.silver_semantic_review_queue`** - Unified review queue for all low-confidence/unmatched records across all entity types
+**`workspace.silver.silver_intermediate_review_queue`** - Unified review queue for all low-confidence/unmatched records across all entity types
 
 ---
 
 ## Notebooks
 
-### 1. `semantic_role_map`
+### 1. `inter_role_map`
 
 **Purpose**: Map job titles to canonical roles
 
 **Input**: `workspace.silver.silver_jobs_current` (title_normalized, title_raw columns)
 
 **Output**:
-* `workspace.semantic.sem_job_role_map` - High-confidence role mappings
-* `workspace.silver.silver_semantic_review_queue` - Low-confidence/unmatched for review
+* `workspace.intermediate.inter_job_role_map` - High-confidence role mappings
+* `workspace.silver.silver_intermediate_review_queue` - Low-confidence/unmatched for review
 
 **Matching Strategy**:
 1. Dictionary lookup against in-memory role dictionary
@@ -110,15 +110,15 @@ CONFIG = {
 
 ---
 
-### 2. `semantic_company_canonicalize`
+### 2. `inter_company_canonicalize`
 
 **Purpose**: Canonicalize company names using fuzzy matching and entity resolution
 
 **Input**: `workspace.silver.silver_jobs_current` (company_name_raw, company_name_norm columns)
 
 **Output**:
-* `workspace.semantic.sem_company_map` - Company entity mappings
-* `workspace.silver.silver_semantic_review_queue` - Ambiguous matches for review
+* `workspace.intermediate.inter_company_map` - Company entity mappings
+* `workspace.silver.silver_intermediate_review_queue` - Ambiguous matches for review
 
 **Matching Strategy**:
 1. **Exact Match**: Direct lookup in in-memory canonical company dictionary
@@ -128,15 +128,15 @@ CONFIG = {
 
 ---
 
-### 3. `semantic_sector_normalize`
+### 3. `inter_sector_normalize`
 
 **Purpose**: Normalize industry sectors to standard taxonomies (NAICS, GICS, SIC)
 
 **Input**: `workspace.silver.silver_jobs_current` (sector_assigned column, if available)
 
 **Output**:
-* `workspace.semantic.sem_sector_map` - Mapped to standard taxonomies
-* `workspace.silver.silver_semantic_review_queue` - Unmatched sectors
+* `workspace.intermediate.inter_sector_map` - Mapped to standard taxonomies
+* `workspace.silver.silver_intermediate_review_queue` - Unmatched sectors
 
 **Supported Taxonomies**:
 * **NAICS** - North American Industry Classification (2-6 digit hierarchical)
@@ -148,16 +148,16 @@ CONFIG = {
 
 ---
 
-### 4. `semantic_skill_graph_build`
+### 4. `inter_skill_graph_build`
 
 **Purpose**: Build skill relationship graphs from co-occurrence patterns and domain knowledge
 
 **Input**: 
-* `workspace.gold.skill_catalog` - Canonical skill taxonomy (or sample data if not available)
+* `workspace.intermediate.inter_skill_catalog` - Canonical skill taxonomy (or sample data if not available)
 * `workspace.silver.silver_jobs_current` - Job descriptions for skill extraction
 
 **Output**:
-* `workspace.semantic.sem_skill_graph` - Graph edges (co-occurrence, prerequisite, similarity)
+* `workspace.gold.skill_graph` - Graph edges (co-occurrence, prerequisite, similarity)
 * Graph metrics (in-memory during execution)
 
 **Graph Types**:
@@ -173,17 +173,17 @@ CONFIG = {
 
 ---
 
-### 5. `semantic_review_resolver`
+### 5. `inter_review_resolver`
 
 **Purpose**: Human-in-the-loop review system for low-confidence and unmatched records
 
 **Input**: 
-* `workspace.silver.silver_semantic_review_queue` - Unified queue for all entity types
+* `workspace.silver.silver_intermediate_review_queue` - Unified queue for all entity types
 
 **Output**:
 * Updated canonical tables (based on review decisions)
 * Updated dictionaries and aliases (learned patterns)
-* `workspace.gold.semantic_review_audit` - Audit trail of human decisions
+* `workspace.gold.intermediate_review_audit` - Audit trail of human decisions
 
 **Review Actions**:
 * **Approve** - Accept suggested mapping
@@ -200,12 +200,12 @@ CONFIG = {
 ```
 workspace.silver.silver_jobs_current
          ↓
-   [Semantic Notebooks]
+   [Intermediate Notebooks]
          ↓
     ┌────┴────┐
     ↓         ↓
-workspace.semantic.*   workspace.silver.silver_semantic_review_queue
-(high confidence)      (low confidence / unmatched)
+workspace.intermediate.*   workspace.silver.silver_intermediate_review_queue
+(high confidence)          (low confidence / unmatched)
     ↓                          ↓
     |                  [Human Review]
     |                          ↓
@@ -221,17 +221,17 @@ workspace.semantic.*   workspace.silver.silver_semantic_review_queue
 
 **Recommended Pipeline Sequence**:
 
-1. **Core Semantic Processing** (after standardization):
-   * `semantic_role_map` - Map job titles to roles
-   * `semantic_company_canonicalize` - Canonicalize companies
-   * `semantic_sector_normalize` - Normalize sectors
-   * `semantic_skill_graph_build` - Build skill relationship graphs
+1. **Core Intermediate Processing** (after standardization):
+   * `inter_role_map` - Map job titles to roles
+   * `inter_company_canonicalize` - Canonicalize companies
+   * `inter_sector_normalize` - Normalize sectors
+   * `inter_skill_graph_build` - Build skill relationship graphs
 
 2. **Review and Learning** (periodic):
-   * `semantic_review_resolver` - Process review queue
-   * Re-run semantic notebooks with updated dictionaries
+   * `inter_review_resolver` - Process review queue
+   * Re-run intermediate notebooks with updated dictionaries
 
-**Dependencies**: All semantic notebooks read from `workspace.silver.silver_jobs_current`, so the silver layer must be populated first.
+**Dependencies**: All intermediate notebooks read from `workspace.silver.silver_jobs_current`, so the silver layer must be populated first.
 
 ---
 

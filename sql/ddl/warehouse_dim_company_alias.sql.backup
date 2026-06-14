@@ -4,7 +4,7 @@
 -- Description: Company name aliases for resolving variations to canonical companies
 -- ============================================================================
 -- Purpose: Physical table definition for dim_company_alias
--- Dependencies: workspace.intermediate.inter_company_canonical
+-- Dependencies: workspace.semantic.sem_company_canonical
 -- Consumers: workspace.warehouse.dim_job
 -- Expected Output: Table created with 6 columns
 -- ============================================================================

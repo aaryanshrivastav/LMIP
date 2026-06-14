@@ -68,7 +68,7 @@
       "depends_on": [{"task_key": "Recovery_CDC_Reprocess"}],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/semantic/inter_role_map",
+        "notebook_path": "/Workspace/Users/aaryan.shrivastav1403@gmail.com/LMIP/notebooks/semantic/semantic_role_map",
         "base_parameters": {
           "reprocess_mode": "true",
           "confidence_threshold": "0.6"

@@ -13,7 +13,33 @@
     }
    },
    "source": [
-    "# Company Dimension LoaderMaintains the `warehouse.dim_company` dimension table with incremental refresh capability.## PurposeTrack canonical company entities resolved from intermediate layer for consistent company references across warehouse.## Key Features* Stable surrogate keys for companies (auto-increment)* Canonical company name resolution from intermediate matching* Match confidence and method tracking* Company-to-sector mapping via dimension lookup* Alias count for fuzzy matching quality* SCD Type 1 (overwrite on change)* Idempotent: safe to re-run## Architecture**Source**: intermediate layer canonical companies and mapping (`workspace.intermediate.canonical_companies`, `workspace.intermediate.inter_company_map`)  **Target**: `workspace.warehouse.dim_company`  **Metadata**: `workspace.metadata.dim_company_refresh_log`  **Mode**: Incremental (merge new/updated companies)## Batch Processing* Tracks refresh history in metadata table* Auto-assigns surrogate keys to new companies* Updates existing companies with latest intermediate mappings* Validates data quality and sector linkage after refresh"
+    "# Company Dimension Loader\n",
+    "\n",
+    "Maintains the `warehouse.dim_company` dimension table with incremental refresh capability.\n",
+    "\n",
+    "## Purpose\n",
+    "Track canonical company entities resolved from intermediate layer for consistent company references across warehouse.\n",
+    "\n",
+    "## Key Features\n",
+    "* Stable surrogate keys for companies (auto-increment)\n",
+    "* Canonical company name resolution from semantic matching\n",
+    "* Match confidence and method tracking\n",
+    "* Company-to-sector mapping via dimension lookup\n",
+    "* Alias count for fuzzy matching quality\n",
+    "* SCD Type 1 (overwrite on change)\n",
+    "* Idempotent: safe to re-run\n",
+    "\n",
+    "## Architecture\n",
+    "**Source**: intermediate layer canonical companies and mapping (`workspace.intermediate.canonical_companies`, `workspace.intermediate.inter_company_map`)  \n",
+    "**Target**: `workspace.warehouse.dim_company`  \n",
+    "**Metadata**: `workspace.metadata.dim_company_refresh_log`  \n",
+    "**Mode**: Incremental (merge new/updated companies)\n",
+    "\n",
+    "## Batch Processing\n",
+    "* Tracks refresh history in metadata table\n",
+    "* Auto-assigns surrogate keys to new companies\n",
+    "* Updates existing companies with latest semantic mappings\n",
+    "* Validates data quality and sector linkage after refresh"
    ]
   },
   {

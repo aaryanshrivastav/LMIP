@@ -5,7 +5,7 @@
 -- ============================================================================
 -- Purpose: Physical table definition for silver_skill_mapping
 -- Dependencies: workspace.silver.silver_jobs_current
--- Consumers: workspace.intermediate.inter_skill_catalog, workspace.warehouse.bridge_job_skill
+-- Consumers: workspace.semantic.sem_skill_catalog, workspace.warehouse.bridge_job_skill
 -- Expected Output: Table created with 9 columns
 -- ============================================================================
 

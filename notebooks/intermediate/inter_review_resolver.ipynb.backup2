@@ -12,20 +12,20 @@
      "nuid": "b965d7d4-4ddb-40a8-852b-afebd34600ec",
      "showTitle": true,
      "tableResultSettingsMap": {},
-     "title": "Semantic Review Resolver - Overview"
+     "title": "Intermediate Review Resolver - Overview"
     }
    },
    "source": [
-    "# Semantic Review Resolver\n",
+    "# Intermediate Review Resolver\n",
     "\n",
-    "This notebook processes the **unified review queue** from all semantic pipelines, applies human feedback, and updates semantic mapping tables. It's the human-in-the-loop component of the semantic layer.\n",
+    "This notebook processes the **unified review queue** from all intermediate pipelines, applies human feedback, and updates intermediate mapping tables. It's the human-in-the-loop component of the intermediate enrichment layer.\n",
     "\n",
-    "## Pipeline Flow (Aligned with README_SEMANTIC.md)\n",
+    "## Pipeline Flow (Aligned with README_INTERMEDIATE.md)\n",
     "- **Input**: Unified review queue from Silver layer\n",
-    "  - `workspace.silver.silver_semantic_review_queue` (all entity types: role, company, sector, skill)\n",
+    "  - `workspace.silver.silver_intermediate_review_queue` (all entity types: role, company, sector, skill)\n",
     "- **Output**: \n",
-    "  - Updated semantic mapping tables (`workspace.semantic.sem_*_map`)\n",
-    "  - Audit trail of human decisions (`workspace.gold.semantic_review_audit`)\n",
+    "  - Updated intermediate mapping tables (`workspace.intermediate.inter_*_map`)\n",
+    "  - Audit trail of human decisions (`workspace.gold.intermediate_review_audit`)\n",
     "\n",
     "## Features\n",
     "- Process unified review queue (all entity types in one table)\n",
@@ -35,9 +35,9 @@
     "- Auto-learn patterns from approved reviews\n",
     "\n",
     "## Architecture Note\n",
-    "This workflow uses the **actual implemented semantic layer architecture**:\n",
+    "This workflow uses the **actual implemented intermediate layer architecture**:\n",
     "- Review queue: Single unified table in Silver layer\n",
-    "- Outputs: Semantic mapping tables (sem_job_role_map, sem_company_map, sem_sector_map)\n",
+    "- Outputs: Intermediate mapping tables (inter_job_role_map, inter_company_map, inter_sector_map)\n",
     "- Not the legacy Gold-layer separate queues design"
    ]
   },
@@ -50,12 +50,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171756954,
      "inputWidgets": {},
      "nuid": "1dcb43d7-0c99-4e70-9985-b90b6bdecffb",
      "showTitle": true,
-     "startTime": 1781171756731,
-     "submitTime": 1781171756668,
      "tableResultSettingsMap": {},
      "title": "Configuration and Imports"
     }
@@ -68,20 +65,20 @@
     "import json\n",
     "\n",
     "# Configuration\n",
-    "# Aligned with actual semantic layer architecture (see README_SEMANTIC.md)\n",
+    "# Aligned with actual intermediate layer architecture (see README_INTERMEDIATE.md)\n",
     "CONFIG = {\n",
     "    # Unified review queue (all entity types in one table)\n",
-    "    \"review_queue\": \"workspace.silver.silver_semantic_review_queue\",\n",
+    "    \"review_queue\": \"workspace.silver.silver_intermediate_review_queue\",\n",
     "    \n",
-    "    # Semantic layer output tables (canonical mappings)\n",
-    "    \"sem_job_role_map\": \"workspace.semantic.sem_job_role_map\",\n",
-    "    \"sem_company_map\": \"workspace.semantic.sem_company_map\",\n",
-    "    \"sem_sector_map\": \"workspace.semantic.sem_sector_map\",\n",
-    "    \"sem_company_canonical\": \"workspace.semantic.sem_company_canonical\",\n",
-    "    \"sem_skill_catalog\": \"workspace.semantic.sem_skill_catalog\",\n",
+    "    # Intermediate layer output tables (canonical mappings)\n",
+    "    \"inter_job_role_map\": \"workspace.intermediate.inter_job_role_map\",\n",
+    "    \"inter_company_map\": \"workspace.intermediate.inter_company_map\",\n",
+    "    \"inter_sector_map\": \"workspace.intermediate.inter_sector_map\",\n",
+    "    \"inter_company_canonical\": \"workspace.intermediate.inter_company_canonical\",\n",
+    "    \"inter_skill_catalog\": \"workspace.intermediate.inter_skill_catalog\",\n",
     "    \n",
     "    # Audit table (remains in Gold layer for operational metrics)\n",
-    "    \"review_audit\": \"workspace.gold.semantic_review_audit\",\n",
+    "    \"review_audit\": \"workspace.gold.intermediate_review_audit\",\n",
     "    \n",
     "    # Batch settings\n",
     "    \"batch_size\": 100,\n",
@@ -103,12 +100,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171759378,
      "inputWidgets": {},
      "nuid": "9b6beb9c-bf2c-4674-b123-59a4764219e4",
      "showTitle": true,
-     "startTime": 1781171756970,
-     "submitTime": 1781171756670,
      "tableResultSettingsMap": {},
      "title": "Load Review Queues"
     }
@@ -156,12 +150,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171759570,
      "inputWidgets": {},
      "nuid": "290fc14e-52ea-4277-959a-72895ba3dd03",
      "showTitle": true,
-     "startTime": 1781171759436,
-     "submitTime": 1781171756672,
      "tableResultSettingsMap": {},
      "title": "Simulate Human Review Decisions"
     }
@@ -212,12 +203,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171759788,
      "inputWidgets": {},
      "nuid": "f09f23c4-8c75-484e-a852-bc98e0414285",
      "showTitle": true,
-     "startTime": 1781171759615,
-     "submitTime": 1781171756674,
      "tableResultSettingsMap": {},
      "title": "Process Role Reviews"
     }
@@ -338,12 +326,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171759984,
      "inputWidgets": {},
      "nuid": "2a65eafc-9bdc-4e2a-9738-7486c6628d12",
      "showTitle": true,
-     "startTime": 1781171759809,
-     "submitTime": 1781171756676,
      "tableResultSettingsMap": {},
      "title": "Process Company Reviews"
     }
@@ -450,12 +435,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171760175,
      "inputWidgets": {},
      "nuid": "7dc8b23a-9145-45c2-846a-3a5231c441f4",
      "showTitle": true,
-     "startTime": 1781171760005,
-     "submitTime": 1781171756678,
      "tableResultSettingsMap": {},
      "title": "Process Sector Reviews"
     }
@@ -538,12 +520,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171760423,
      "inputWidgets": {},
      "nuid": "822b5689-a1b2-4051-995a-c9f820c8058d",
      "showTitle": true,
-     "startTime": 1781171760206,
-     "submitTime": 1781171756679,
      "tableResultSettingsMap": {},
      "title": "Write Approved Records"
     }
@@ -554,7 +533,7 @@
     "write_count = 0\n",
     "\n",
     "if approved_roles_df is not None:\n",
-    "    print(f\"\\nWriting {approved_roles_df.count()} approved roles to {CONFIG['sem_job_role_map']}...\")\n",
+    "    print(f\"\\nWriting {approved_roles_df.count()} approved roles to {CONFIG['inter_job_role_map']}...\")\n",
     "    approved_roles_df.write \\\n",
     "        .format(\"delta\") \\\n",
     "        .mode(\"append\") \\\n",
@@ -596,12 +575,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171760679,
      "inputWidgets": {},
      "nuid": "2721a027-7fe4-44ce-bb2d-93a522f42c4d",
      "showTitle": true,
-     "startTime": 1781171760460,
-     "submitTime": 1781171756681,
      "tableResultSettingsMap": {},
      "title": "Update Dictionaries and Aliases"
     }
@@ -637,12 +613,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171760892,
      "inputWidgets": {},
      "nuid": "a606e6c1-f582-4d5f-b925-04539821ed4b",
      "showTitle": true,
-     "startTime": 1781171760701,
-     "submitTime": 1781171756683,
      "tableResultSettingsMap": {},
      "title": "Write Audit Trail"
     }
@@ -694,12 +667,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171761085,
      "inputWidgets": {},
      "nuid": "69bf86f4-5a51-4625-bf58-0905420996f6",
      "showTitle": true,
-     "startTime": 1781171760906,
-     "submitTime": 1781171756685,
      "tableResultSettingsMap": {},
      "title": "Update Review Queue Status"
     }
@@ -736,12 +706,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1781171761186,
      "inputWidgets": {},
      "nuid": "6ce407b5-2b44-415c-b876-eb6026095b8e",
      "showTitle": true,
-     "startTime": 1781171761098,
-     "submitTime": 1781171756687,
      "tableResultSettingsMap": {},
      "title": "Execution Summary"
     }

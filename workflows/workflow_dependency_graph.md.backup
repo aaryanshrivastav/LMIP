@@ -32,9 +32,9 @@
          ▼
   ┌─────────────┐
   │  SEMANTIC   │  Enrichment & Canonicalization
-  │ (Enriched)  │  ➜ inter_job_role_map
-  └──────┬──────┘  ➜ inter_company_map
-         │          ➜ inter_sector_map
+  │ (Enriched)  │  ➜ sem_job_role_map
+  └──────┬──────┘  ➜ sem_company_map
+         │          ➜ sem_sector_map
          │  [LMIP_Semantic_Processing]
          │
          ▼
@@ -161,12 +161,12 @@ Semantic_Role_Map   Semantic_Company_Canonicalize
 ```
 
 **Key Tables Written**:
-* `semantic.inter_job_role_map`
-* `semantic.inter_company_map`
-* `semantic.inter_sector_map`
-* `semantic.inter_skill_catalog`
+* `semantic.sem_job_role_map`
+* `semantic.sem_company_map`
+* `semantic.sem_sector_map`
+* `semantic.sem_skill_catalog`
 * `semantic.sem_skill_graph`
-* `silver.silver_inter_review_queue`
+* `silver.silver_semantic_review_queue`
 
 **Failure Handling**:
 * Low-confidence matches queue for human review
@@ -373,7 +373,7 @@ TRIGGER TYPE: Periodic (Daily)
                                │
                                └──► LMIP_Semantic_Processing
                                       │
-                                      └──► [File Trigger] dbfs:/databricks/workflows/triggers/inter_processing_complete
+                                      └──► [File Trigger] dbfs:/databricks/workflows/triggers/semantic_processing_complete
                                              │
                                              └──► LMIP_Warehouse_Build
                                                     │

@@ -23,8 +23,8 @@
     "## Architecture\n",
     "\n",
     "**Input**: `workspace.silver.silver_jobs_current`  \n",
-    "**Output**: `workspace.semantic.sem_company_map`  \n",
-    "**Review Queue**: `workspace.silver.silver_semantic_review_queue`  \n",
+    "**Output**: `workspace.intermediate.inter_company_map`  \n",
+    "**Review Queue**: `workspace.silver.silver_intermediate_review_queue`  \n",
     "**Mode**: Incremental (process new batches only)\n",
     "\n",
     "## Batch Processing\n",
@@ -51,12 +51,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921637262,
      "inputWidgets": {},
      "nuid": "fc97617f-3ee8-4f0c-a2f9-45acba54bb95",
      "showTitle": true,
-     "startTime": 1780921637216,
-     "submitTime": 1780921637112,
      "tableResultSettingsMap": {},
      "title": "Parameters"
     }
@@ -77,12 +74,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921637362,
      "inputWidgets": {},
      "nuid": "6a30aa90-3556-4cad-b2c8-1f9e0d0d54d6",
      "showTitle": true,
-     "startTime": 1780921637277,
-     "submitTime": 1780921637114,
      "tableResultSettingsMap": {},
      "title": "Configuration and Imports"
     }
@@ -97,15 +91,15 @@
     "\n",
     "CATALOG = \"workspace\"\n",
     "SILVER_SCHEMA = f\"{CATALOG}.silver\"\n",
-    "SEMANTIC_SCHEMA = f\"{CATALOG}.semantic\"\n",
+    "INTERMEDIATE_SCHEMA = f\"{CATALOG}.intermediate\"\n",
     "METADATA_SCHEMA = f\"{CATALOG}.metadata\"\n",
     "\n",
     "# Configuration\n",
     "CONFIG = {\n",
     "    \"input_table\": f\"{SILVER_SCHEMA}.silver_jobs_current\",\n",
-    "    \"output_table\": f\"{SEMANTIC_SCHEMA}.sem_company_map\",\n",
-    "    \"review_queue_table\": f\"{SILVER_SCHEMA}.silver_semantic_review_queue\",\n",
-    "    \"canonical_companies_table\": f\"{SEMANTIC_SCHEMA}.canonical_companies\",\n",
+    "    \"output_table\": f\"{INTERMEDIATE_SCHEMA}.inter_company_map\",\n",
+    "    \"review_queue_table\": f\"{SILVER_SCHEMA}.silver_intermediate_review_queue\",\n",
+    "    \"canonical_companies_table\": f\"{INTERMEDIATE_SCHEMA}.canonical_companies\",\n",
     "    \"confidence_threshold\": 0.75,\n",
     "    \"fuzzy_match_threshold\": 0.85,\n",
     "    \"min_string_length\": 3,\n",
@@ -126,12 +120,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921637463,
      "inputWidgets": {},
      "nuid": "34f6c837-0baf-4a4a-97f1-2a9310a7b16d",
      "showTitle": true,
-     "startTime": 1780921637370,
-     "submitTime": 1780921637115,
      "tableResultSettingsMap": {},
      "title": "Utility Functions"
     }
@@ -205,12 +196,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921637864,
      "inputWidgets": {},
      "nuid": "4ace83fb-9c43-485f-9f8a-f34640c43ec1",
      "showTitle": true,
-     "startTime": 1780921637473,
-     "submitTime": 1780921637117,
      "tableResultSettingsMap": {},
      "title": "Create Metadata Table"
     }
@@ -259,12 +247,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921637964,
      "inputWidgets": {},
      "nuid": "c9f73fa3-93d8-4447-ab25-acd204aa5f20",
      "showTitle": true,
-     "startTime": 1780921637872,
-     "submitTime": 1780921637118,
      "tableResultSettingsMap": {},
      "title": "⚠️ RESET (Optional) - Clear All Company Mappings"
     }
@@ -290,12 +275,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921639171,
      "inputWidgets": {},
      "nuid": "0114a19f-9364-4ec2-b730-ef89a731c90d",
      "showTitle": true,
-     "startTime": 1780921637975,
-     "submitTime": 1780921637120,
      "tableResultSettingsMap": {},
      "title": "Identify Unprocessed Batches"
     }
@@ -340,12 +322,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921898407,
      "inputWidgets": {},
      "nuid": "2778b215-8515-4461-99ff-5514253a77b3",
      "showTitle": true,
-     "startTime": 1780921896529,
-     "submitTime": 1780921896503,
      "tableResultSettingsMap": {},
      "title": "Load Canonical Companies"
     }
@@ -421,12 +400,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921641674,
      "inputWidgets": {},
      "nuid": "49f07f75-964f-4826-9b29-9aced89f49b7",
      "showTitle": true,
-     "startTime": 1780921640681,
-     "submitTime": 1780921637124,
      "tableResultSettingsMap": {},
      "title": "Load Extracted Companies"
     }
@@ -475,12 +451,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921644522,
      "inputWidgets": {},
      "nuid": "87612650-0913-4a2e-b5dc-44bedd047955",
      "showTitle": true,
-     "startTime": 1780921641700,
-     "submitTime": 1780921637127,
      "tableResultSettingsMap": {},
      "title": "Normalize Extracted Names"
     }
@@ -517,12 +490,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921646484,
      "inputWidgets": {},
      "nuid": "4bb776c8-e2ac-4cf3-ad1f-ca68467ab417",
      "showTitle": true,
-     "startTime": 1780921644557,
-     "submitTime": 1780921637129,
      "tableResultSettingsMap": {},
      "title": "Build Lookup Tables"
     }
@@ -563,12 +533,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921650290,
      "inputWidgets": {},
      "nuid": "720dad4f-748a-4ab3-8d23-16ff4bad56bd",
      "showTitle": true,
-     "startTime": 1780921646505,
-     "submitTime": 1780921637132,
      "tableResultSettingsMap": {},
      "title": "Stage 1: Exact Match"
     }
@@ -617,12 +584,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921667849,
      "inputWidgets": {},
      "nuid": "01738a38-a540-42f1-b9fc-53fd6743366c",
      "showTitle": true,
-     "startTime": 1780921650299,
-     "submitTime": 1780921637134,
      "tableResultSettingsMap": {},
      "title": "Stage 2: Alias Match"
     }
@@ -678,12 +642,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921674554,
      "inputWidgets": {},
      "nuid": "06970052-d54a-4afe-97ae-391f6a8b25cf",
      "showTitle": true,
-     "startTime": 1780921667858,
-     "submitTime": 1780921637136,
      "tableResultSettingsMap": {},
      "title": "Stage 3: Fuzzy Match"
     }
@@ -798,12 +759,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921695972,
      "inputWidgets": {},
      "nuid": "26677fd4-09e5-4777-805a-7f78ae8fcf2d",
      "showTitle": true,
-     "startTime": 1780921674565,
-     "submitTime": 1780921637138,
      "tableResultSettingsMap": {},
      "title": "Split High/Low Confidence Matches"
     }
@@ -871,12 +829,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921850169,
      "inputWidgets": {},
      "nuid": "2b5c0c54-f2a7-4ee0-99a1-53d2d3312eaf",
      "showTitle": true,
-     "startTime": 1780921695984,
-     "submitTime": 1780921637141,
      "tableResultSettingsMap": {},
      "title": "Write to Delta Tables"
     }
@@ -1031,12 +986,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921858771,
      "inputWidgets": {},
      "nuid": "d3aa0c44-887c-4312-b94d-1f2382d756f7",
      "showTitle": true,
-     "startTime": 1780921850181,
-     "submitTime": 1780921637143,
      "tableResultSettingsMap": {},
      "title": "Return Summary JSON"
     }
@@ -1069,12 +1021,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780921858771,
      "inputWidgets": {},
      "nuid": "2bee0936-dad2-4a4b-a127-d385431b3535",
      "showTitle": true,
-     "startTime": 1780921858771,
-     "submitTime": 1780921637145,
      "tableResultSettingsMap": {},
      "title": "Create sem_company_canonical Table"
     }

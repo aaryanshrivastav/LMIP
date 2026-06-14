@@ -4,7 +4,7 @@
 -- Description: Skill dimension with canonical skill taxonomy
 -- ============================================================================
 -- Purpose: Physical table definition for dim_skill
--- Dependencies: workspace.intermediate.inter_skill_catalog
+-- Dependencies: workspace.semantic.sem_skill_catalog
 -- Consumers: workspace.warehouse.bridge_job_skill
 -- Expected Output: Table created with 8 columns
 -- ============================================================================

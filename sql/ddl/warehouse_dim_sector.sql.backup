@@ -4,7 +4,7 @@
 -- Description: Industry sector dimension with hierarchical taxonomy
 -- ============================================================================
 -- Purpose: Physical table definition for dim_sector
--- Dependencies: workspace.intermediate.inter_sector_map
+-- Dependencies: workspace.semantic.sem_sector_map
 -- Consumers: workspace.warehouse.dim_company, workspace.warehouse.dim_job
 -- Expected Output: Table created with 7 columns
 -- ============================================================================

@@ -4,7 +4,7 @@
 -- Description: Bridge table linking jobs to skills (many-to-many relationship)
 -- ============================================================================
 -- Purpose: Physical table definition for bridge_job_skill
--- Dependencies: workspace.intermediate.inter_job_skill_evidence
+-- Dependencies: workspace.semantic.sem_job_skill_evidence
 -- Consumers: workspace.gold.gold_skill_demand, workspace.gold.gold_hospitality_skills
 -- Expected Output: Table created with 6 columns
 -- ============================================================================

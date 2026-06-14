@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS dim_skill (
 
 COMMENT ON TABLE dim_skill IS 'Skill dimension';
 COMMENT ON COLUMN dim_skill.skill_sk IS 'Surrogate key';
-COMMENT ON COLUMN dim_skill.canonical_skill_id IS 'Business key from intermediate layer';
+COMMENT ON COLUMN dim_skill.canonical_skill_id IS 'Business key from semantic layer';
 COMMENT ON COLUMN dim_skill.skill_name IS 'Canonical skill name';
 COMMENT ON COLUMN dim_skill.skill_category IS 'Skill category';
 

@@ -46,12 +46,12 @@ This directory contains notebooks for building and maintaining the **enterprise 
 |-----------|------|---------|--------|
 | **dim_date** | Type 1 | Calendar attributes, fiscal periods | Generated |
 | **dim_source** | Type 1 | Data source systems | silver.silver_jobs_current |
-| **dim_company** | Type 1 | Canonical company entities | semantic.inter_company_canonical |
-| **dim_company_alias** | Type 1 | Company name variations | semantic.inter_company_canonical |
+| **dim_company** | Type 1 | Canonical company entities | semantic.sem_company_canonical |
+| **dim_company_alias** | Type 1 | Company name variations | semantic.sem_company_canonical |
 | **dim_location** | Type 1 | Geographic hierarchy | silver.silver_jobs_current |
-| **dim_sector** | Type 1 | Industry sectors | semantic.inter_sector_map |
-| **dim_skill** | Type 1 | Skills catalog | semantic.inter_skill_catalog |
-| **dim_role** | Type 1 | Canonical job roles | semantic.inter_job_role_map |
+| **dim_sector** | Type 1 | Industry sectors | semantic.sem_sector_map |
+| **dim_skill** | Type 1 | Skills catalog | semantic.sem_skill_catalog |
+| **dim_role** | Type 1 | Canonical job roles | semantic.sem_job_role_map |
 | **dim_job** | **Type 2** | Job postings with history | silver.silver_jobs_current |
 
 ### 📊 Fact Tables (Transactional)
@@ -218,13 +218,13 @@ Maintains data source systems:
 
 #### `wh_dim_sector`
 Industry sector hierarchy:
-* Canonical sector names from intermediate layer
+* Canonical sector names from semantic layer
 * Sector categories and levels
 * Parent-child relationships for drill-down
 
 #### `wh_dim_company`
 Canonical company entities:
-* Resolves company name variations via intermediate layer
+* Resolves company name variations via semantic layer
 * Links to sector dimension
 * Tracks alias counts and match confidence
 
@@ -311,13 +311,13 @@ ETL operational metrics:
 * `workspace.silver.silver_job_changes` - Change event log
 * `workspace.silver.silver_job_identity_map` - Canonical job identity
 
-**Intermediate Layer**:
-* `workspace.intermediate.inter_company_canonical` - Company mapping
-* `workspace.intermediate.inter_company_map` - Company-to-sector
-* `workspace.intermediate.inter_sector_map` - Sector hierarchy
-* `workspace.intermediate.inter_skill_catalog` - Skills catalog
-* `workspace.intermediate.inter_job_role_map` - Role mapping
-* `workspace.intermediate.inter_job_skill_evidence` - Job-skill relationships
+**Semantic Layer**:
+* `workspace.semantic.sem_company_canonical` - Company mapping
+* `workspace.semantic.sem_company_map` - Company-to-sector
+* `workspace.semantic.sem_sector_map` - Sector hierarchy
+* `workspace.semantic.sem_skill_catalog` - Skills catalog
+* `workspace.semantic.sem_job_role_map` - Role mapping
+* `workspace.semantic.sem_job_skill_evidence` - Job-skill relationships
 
 **Audit Layer** (for fact_pipeline_runs):
 * `workspace.audit.pipeline_run_log` - Pipeline execution logs
@@ -446,7 +446,7 @@ HAVING COUNT(*) > 1;  -- Should return 0 rows
 
 **Issue**: "Table or view not found" errors
 * **Cause**: Upstream silver/semantic tables don't exist yet
-* **Fix**: Run silver and intermediate layer notebooks first
+* **Fix**: Run silver and semantic layer notebooks first
 
 **Issue**: Foreign keys resolving to -1 (unknown)
 * **Cause**: Dimension data missing or join keys don't match
@@ -481,7 +481,7 @@ HAVING COUNT(*) > 1;  -- Should return 0 rows
 ### After Warehouse is Built
 
 1. **Create gold layer aggregates** for common queries
-2. **Build intermediate layer** (metrics, KPIs) on top of warehouse
+2. **Build semantic layer** (metrics, KPIs) on top of warehouse
 3. **Connect BI tools** (Tableau, Power BI) to warehouse schema
 4. **Implement data observability** monitoring on fact/dimension freshness
 5. **Add role-based security** using Unity Catalog grants
@@ -514,7 +514,7 @@ HAVING COUNT(*) > 1;  -- Should return 0 rows
 
 For questions or issues with warehouse notebooks:
 * Review validation queries in each notebook
-* Check upstream silver/intermediate layer data quality
+* Check upstream silver/semantic layer data quality
 * Verify execution order (dimensions → SCD2 → bridges → facts)
 * Consult data engineering team for schema changes
 

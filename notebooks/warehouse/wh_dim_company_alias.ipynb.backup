@@ -4,7 +4,10 @@
    "cell_type": "markdown",
    "metadata": {
     "application/vnd.databricks.v1+cell": {
-     "cellMetadata": {},
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
      "inputWidgets": {},
      "nuid": "7ec09f71-e816-4a99-97b7-71fdf58d729b",
      "showTitle": true,
@@ -13,7 +16,31 @@
     }
    },
    "source": [
-    "# Company Alias Dimension LoaderThis notebook maintains the `warehouse.dim_company_alias` dimension table using standardized batch processing.**Purpose**: Map company name variations to canonical company entities**Key Features**:* Links company aliases to canonical companies via company_sk* Extracts original company names from intermediate mapping layer* Tracks match confidence and method for each alias* Enables fuzzy company name lookup in fact table joins**Architecture**:- **Source**: intermediate layer company mappings (`workspace.intermediate.inter_company_map`)- **Reference**: Warehouse company dimension (`workspace.warehouse.dim_company`)- **Target**: `workspace.warehouse.dim_company_alias`- **Metadata**: `workspace.metadata.dim_company_alias_refresh_log`**Processing Logic**:1. Extract company name variations from `inter_company_map.explanation_json`2. Link aliases to canonical companies via `dim_company`3. Generate stable surrogate keys for new aliases4. Merge into dimension with full audit trail**Idempotency**: Safe to re-run; uses MERGE for upsert logic"
+    "# Company Alias Dimension Loader\n",
+    "\n",
+    "This notebook maintains the `warehouse.dim_company_alias` dimension table using standardized batch processing.\n",
+    "\n",
+    "**Purpose**: Map company name variations to canonical company entities\n",
+    "\n",
+    "**Key Features**:\n",
+    "* Links company aliases to canonical companies via company_sk\n",
+    "* Extracts original company names from semantic mapping layer\n",
+    "* Tracks match confidence and method for each alias\n",
+    "* Enables fuzzy company name lookup in fact table joins\n",
+    "\n",
+    "**Architecture**:\n",
+    "- **Source**: Semantic layer company mappings (`workspace.semantic.sem_company_map`)\n",
+    "- **Reference**: Warehouse company dimension (`workspace.warehouse.dim_company`)\n",
+    "- **Target**: `workspace.warehouse.dim_company_alias`\n",
+    "- **Metadata**: `workspace.metadata.dim_company_alias_refresh_log`\n",
+    "\n",
+    "**Processing Logic**:\n",
+    "1. Extract company name variations from `sem_company_map.explanation_json`\n",
+    "2. Link aliases to canonical companies via `dim_company`\n",
+    "3. Generate stable surrogate keys for new aliases\n",
+    "4. Merge into dimension with full audit trail\n",
+    "\n",
+    "**Idempotency**: Safe to re-run; uses MERGE for upsert logic"
    ]
   },
   {
@@ -64,12 +91,12 @@
     "import json\n",
     "\n",
     "CATALOG = \"workspace\"\n",
-    "INTERMEDIATE_SCHEMA = f\"{CATALOG}.intermediate\"\n",
+    "SEMANTIC_SCHEMA = f\"{CATALOG}.semantic\"\n",
     "WAREHOUSE_SCHEMA = f\"{CATALOG}.warehouse\"\n",
     "METADATA_SCHEMA = f\"{CATALOG}.metadata\"\n",
     "\n",
     "# Source and target tables\n",
-    "SOURCE_MAP_TABLE = f\"{INTERMEDIATE_SCHEMA}.inter_company_map\"\n",
+    "SOURCE_MAP_TABLE = f\"{SEMANTIC_SCHEMA}.sem_company_map\"\n",
     "COMPANY_DIM_TABLE = f\"{WAREHOUSE_SCHEMA}.dim_company\"\n",
     "TARGET_TABLE = f\"{WAREHOUSE_SCHEMA}.dim_company_alias\"\n",
     "METADATA_TABLE = f\"{METADATA_SCHEMA}.dim_company_alias_refresh_log\"\n",
@@ -176,7 +203,7 @@
    },
    "outputs": [],
    "source": [
-    "print(\"Extracting company aliases from intermediate layer...\", end=\" \")\n",
+    "print(\"Extracting company aliases from semantic layer...\", end=\" \")\n",
     "\n",
     "# Load company mapping data and parse explanation_json to get original names\n",
     "company_map_df = spark.table(SOURCE_MAP_TABLE)\n",

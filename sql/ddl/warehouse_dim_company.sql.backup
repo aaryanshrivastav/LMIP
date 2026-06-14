@@ -4,7 +4,7 @@
 -- Description: Company dimension with canonical company names and attributes (SCD Type 1)
 -- ============================================================================
 -- Purpose: Physical table definition for dim_company
--- Dependencies: workspace.intermediate.inter_company_canonical, workspace.intermediate.inter_company_map
+-- Dependencies: workspace.semantic.sem_company_canonical, workspace.semantic.sem_company_map
 -- Consumers: workspace.warehouse.dim_job, workspace.warehouse.fact_job_postings
 -- Expected Output: Table created with 10 columns
 -- ============================================================================

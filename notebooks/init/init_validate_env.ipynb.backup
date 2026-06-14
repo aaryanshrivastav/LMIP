@@ -62,7 +62,7 @@
     "\n",
     "# Configuration\n",
     "CATALOG = \"workspace\"\n",
-    "REQUIRED_SCHEMAS = [\"metadata\", \"bronze\", \"silver\", \"intermediate\", \"gold\", \"reporting\", \"audit\", \"publish\", \"quarantine\"]\n",
+    "REQUIRED_SCHEMAS = [\"metadata\", \"bronze\", \"silver\", \"semantic\", \"warehouse\", \"gold\", \"audit\", \"publish\", \"quarantine\"]\n",
     "REQUIRED_PYTHON_VERSION = \"3.10\"\n",
     "REQUIRED_PACKAGES = [\"requests\", \"pyspark\"]\n",
     "API_ENDPOINTS_TO_TEST = [\n",

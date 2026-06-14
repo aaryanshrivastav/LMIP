@@ -23,8 +23,8 @@
     "## Architecture\n",
     "\n",
     "**Input**: `workspace.silver.silver_jobs_current`  \n",
-    "**Output**: `workspace.semantic.sem_sector_map`  \n",
-    "**Review Queue**: `workspace.silver.silver_semantic_review_queue`  \n",
+    "**Output**: `workspace.intermediate.inter_sector_map`  \n",
+    "**Review Queue**: `workspace.silver.silver_intermediate_review_queue`  \n",
     "**Mode**: Incremental (process new batches only)\n",
     "\n",
     "## Batch Processing\n",
@@ -50,12 +50,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922305037,
      "inputWidgets": {},
      "nuid": "ccd5ef4f-5ac9-406c-813a-d2002107033a",
      "showTitle": true,
-     "startTime": 1780922304488,
-     "submitTime": 1780922304461,
      "tableResultSettingsMap": {},
      "title": "Parameters"
     }
@@ -76,12 +73,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922255496,
      "inputWidgets": {},
      "nuid": "8b2b15a8-d3d1-474c-8789-183e14f0c10a",
      "showTitle": true,
-     "startTime": 1780922254987,
-     "submitTime": 1780922254923,
      "tableResultSettingsMap": {},
      "title": "Configuration and Imports"
     }
@@ -96,14 +90,14 @@
     "\n",
     "CATALOG = \"workspace\"\n",
     "SILVER_SCHEMA = f\"{CATALOG}.silver\"\n",
-    "SEMANTIC_SCHEMA = f\"{CATALOG}.semantic\"\n",
+    "INTERMEDIATE_SCHEMA = f\"{CATALOG}.intermediate\"\n",
     "METADATA_SCHEMA = f\"{CATALOG}.metadata\"\n",
     "\n",
     "# Configuration\n",
     "CONFIG = {\n",
     "    \"input_table\": f\"{SILVER_SCHEMA}.silver_jobs_current\",\n",
-    "    \"output_table\": f\"{SEMANTIC_SCHEMA}.sem_sector_map\",\n",
-    "    \"review_queue_table\": f\"{SILVER_SCHEMA}.silver_semantic_review_queue\",\n",
+    "    \"output_table\": f\"{INTERMEDIATE_SCHEMA}.inter_sector_map\",\n",
+    "    \"review_queue_table\": f\"{SILVER_SCHEMA}.silver_intermediate_review_queue\",\n",
     "    \"primary_taxonomy\": \"NAICS\",  # Primary taxonomy to use\n",
     "    \"confidence_threshold\": 0.8,\n",
     "    \"enable_hierarchical_rollup\": True,  # Roll up to parent categories if needed\n",
@@ -124,12 +118,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922264316,
      "inputWidgets": {},
      "nuid": "daea39ae-d342-49b9-b1ef-22c57e9b9dd3",
      "showTitle": true,
-     "startTime": 1780922259662,
-     "submitTime": 1780922259631,
      "tableResultSettingsMap": {},
      "title": "Create Metadata Table"
     }
@@ -201,12 +192,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922324012,
      "inputWidgets": {},
      "nuid": "df8e34e6-0005-46e4-adca-66afb89a81e9",
      "showTitle": true,
-     "startTime": 1780922322155,
-     "submitTime": 1780922322128,
      "tableResultSettingsMap": {},
      "title": "Identify Unprocessed Batches"
     }
@@ -251,12 +239,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922331042,
      "inputWidgets": {},
      "nuid": "0c575664-f58c-43cc-9341-0fcf379be007",
      "showTitle": true,
-     "startTime": 1780922329416,
-     "submitTime": 1780922329388,
      "tableResultSettingsMap": {},
      "title": "Load Sector Taxonomy from Metadata"
     }
@@ -296,12 +281,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922341107,
      "inputWidgets": {},
      "nuid": "96d66253-4815-4542-a22e-3d61961f690c",
      "showTitle": true,
-     "startTime": 1780922336145,
-     "submitTime": 1780922336118,
      "tableResultSettingsMap": {},
      "title": "Load Extracted Sectors"
     }
@@ -353,12 +335,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922356742,
      "inputWidgets": {},
      "nuid": "2c6da59a-c77b-4b61-beb1-745ec5edbbfe",
      "showTitle": true,
-     "startTime": 1780922351165,
-     "submitTime": 1780922351131,
      "tableResultSettingsMap": {},
      "title": "Normalize Sector Names"
     }
@@ -404,12 +383,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922369615,
      "inputWidgets": {},
      "nuid": "5fbda7ff-2437-4df3-a69a-b4545395e0e2",
      "showTitle": true,
-     "startTime": 1780922365898,
-     "submitTime": 1780922365869,
      "tableResultSettingsMap": {},
      "title": "Build Keyword-Based Matching"
     }
@@ -444,12 +420,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922397040,
      "inputWidgets": {},
      "nuid": "39230e1b-c472-43d9-8ebd-582cb4b6de8f",
      "showTitle": true,
-     "startTime": 1780922382195,
-     "submitTime": 1780922382156,
      "tableResultSettingsMap": {},
      "title": "Stage 1: Exact Keyword Match"
     }
@@ -503,12 +476,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922412863,
      "inputWidgets": {},
      "nuid": "7357f141-ee92-4c6b-b272-92422a7871f0",
      "showTitle": true,
-     "startTime": 1780922403182,
-     "submitTime": 1780922403155,
      "tableResultSettingsMap": {},
      "title": "Stage 2: Partial Keyword Match"
     }
@@ -585,12 +555,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922425586,
      "inputWidgets": {},
      "nuid": "d971bb29-139f-4e2a-b0bd-964aa5277f70",
      "showTitle": true,
-     "startTime": 1780922422240,
-     "submitTime": 1780922422206,
      "tableResultSettingsMap": {},
      "title": "Hierarchical Rollup (Optional)"
     }
@@ -648,12 +615,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922527147,
      "inputWidgets": {},
      "nuid": "591a1473-9a57-4161-acc0-c0183712ca92",
      "showTitle": false,
-     "startTime": 1780922510685,
-     "submitTime": 1780922510639,
      "tableResultSettingsMap": {},
      "title": ""
     }
@@ -722,12 +686,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922606726,
      "inputWidgets": {},
      "nuid": "85d2e532-1856-43dd-b632-4fc58549f3a3",
      "showTitle": true,
-     "startTime": 1780922590730,
-     "submitTime": 1780922590699,
      "tableResultSettingsMap": {},
      "title": "Split High/Low Confidence"
     }
@@ -798,12 +759,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922780454,
      "inputWidgets": {},
      "nuid": "664efbbd-cd5f-4631-a6ea-3c315f948f4b",
      "showTitle": true,
-     "startTime": 1780922685311,
-     "submitTime": 1780922685271,
      "tableResultSettingsMap": {},
      "title": "Write to Delta Tables"
     }
@@ -924,12 +882,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922833706,
      "inputWidgets": {},
      "nuid": "bca17af8-1c3f-40f4-85c2-5d117ffe2e3a",
      "showTitle": true,
-     "startTime": 1780922818037,
-     "submitTime": 1780922818000,
      "tableResultSettingsMap": {},
      "title": "Analysis and Metrics"
     }
@@ -981,12 +936,9 @@
       "byteLimit": 2048000,
       "rowLimit": 10000
      },
-     "finishTime": 1780922855238,
      "inputWidgets": {},
      "nuid": "ba2834fb-4ba4-4bba-bae4-38fe0a65598e",
      "showTitle": true,
-     "startTime": 1780922854981,
-     "submitTime": 1780922854958,
      "tableResultSettingsMap": {},
      "title": "Return Summary JSON"
     }
